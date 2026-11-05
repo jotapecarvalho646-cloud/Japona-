@@ -534,5 +534,12 @@ function exportApp(){
   }).catch(function(){sheet("<h3>Não deu para salvar aqui</h3><p>Abra o app pelo link do GitHub (o ícone na tela inicial) e tente de novo, com internet.</p><button class='big' data-a='x' type='button'>OK</button>")});
 }
 </script>
+<style>
+/* abas de cima numa linha só (não quebra em telas pequenas / letra grande) */
+.views{display:flex!important;gap:6px;overflow-x:auto;scrollbar-width:none;padding:10px 12px!important}
+.views::-webkit-scrollbar{display:none}
+.views button{flex:1 0 auto;white-space:nowrap;padding:10px 12px!important;font-size:15px;line-height:1.2;border-radius:12px}
+.hero h1{font-size:20px}
+</style>
 </body>
 </html>
