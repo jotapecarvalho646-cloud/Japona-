@@ -97,21 +97,28 @@ input[type=text]{width:100%;padding:14px;border-radius:12px;border:2px solid var
 
 <script>
 // CARDÁPIO DE EXEMPLO: edite nomes, descrições e preços aqui. [nome, descrição, preço, emoji, cor]
-var MENU=[{cat:"⭐ Sugestões da casa",itens:[["Pastel Tudão", "Carne, queijo, pizza e frango. Opção de Catupiry ou cheddar", 23, "🥟", "#e9a35f"], ["Pastel X-Tudão", "Carne, queijo, pizza, frango, ovo, palmito e carne seca", 25, "🥟", "#e58f4f"]]},{cat:"Pastéis tradicionais",itens:[["Carne", "Pastel tradicional", 12, "🥟", "#f4a261"], ["Frango", "Pastel tradicional", 12, "🥟", "#f4a261"], ["Queijo", "Pastel tradicional", 12, "🥟", "#f4a261"], ["Queijo com orégano", "Pastel tradicional", 12, "🥟", "#f4a261"], ["Pizza", "Pastel tradicional", 12, "🥟", "#f4a261"], ["Pastel de Vento", "Crocante, sem recheio", 6, "🥟", "#f6c453"]]},{cat:"Pastéis especiais",itens:[["Palmito", "", 15, "🌿", "#8fc77a"], ["Palmito c/ pizza", "", 17, "🌿", "#8fc77a"], ["Palmito c/ queijo", "", 17, "🌿", "#8fc77a"], ["Palmito c/ carne", "", 17, "🌿", "#8fc77a"], ["Palmito c/ frango", "", 17, "🌿", "#8fc77a"], ["Palmito c/ Catupiry ou cheddar", "", 17, "🌿", "#8fc77a"], ["Palmito c/ ovo", "", 17, "🌿", "#8fc77a"], ["Carne c/ ovo", "", 16, "🥚", "#f2cf66"], ["Queijo c/ ovo", "", 16, "🥚", "#f2cf66"], ["Frango c/ ovo", "", 16, "🥚", "#f2cf66"], ["Pizza c/ ovo", "", 16, "🥚", "#f2cf66"], ["Carne seca", "", 17, "🥩", "#d9825b"], ["Carne seca c/ queijo", "", 18, "🥩", "#d9825b"], ["Carne seca c/ banana", "", 18, "🍌", "#d9825b"]]},{cat:"Pastéis mistos",itens:[["Carne c/ queijo", "", 16, "🥟", "#e9a35f"], ["Frango c/ Catupiry ou cheddar", "", 16, "🥟", "#e9a35f"], ["Carne c/ frango", "", 16, "🥟", "#e9a35f"], ["Carne c/ Catupiry ou cheddar", "", 16, "🥟", "#e9a35f"], ["Frango c/ queijo", "", 16, "🥟", "#e9a35f"], ["Frango c/ pizza", "", 16, "🥟", "#e9a35f"], ["Pizza c/ Catupiry ou cheddar", "", 16, "🥟", "#e9a35f"], ["Queijo c/ Catupiry ou cheddar", "", 16, "🥟", "#e9a35f"], ["Carne c/ pizza", "", 16, "🥟", "#e9a35f"]]},{cat:"Pastéis doces",itens:[["Chocolate", "", 10, "🍫", "#a8704f"], ["Chocolate Branco", "", 10, "🍫", "#a8704f"], ["Beijinho", "", 10, "🍫", "#a8704f"], ["Romeu e Julieta", "", 10, "🍫", "#a8704f"], ["Nutella", "Nutella é vida!", 15, "🍫", "#8a5a3c"]]},{cat:"Suco de laranja",itens:[["Suco de laranja – Copo 400ml", "Natural e refrescante", 8, "🍊", "#f5a65b"], ["Suco de laranja – Copo 700ml", "Natural e refrescante", 14, "🍊", "#f5a65b"], ["Suco de laranja – Jarra 1L", "Natural e refrescante", 20, "🍊", "#f5a65b"], ["Suco de laranja – Garrafa p/ viagem 500ml", "Natural e refrescante", 10, "🍊", "#f5a65b"], ["Suco de laranja – Garrafa p/ viagem 1L", "Natural e refrescante", 20, "🍊", "#f5a65b"]]},{cat:"Caldo de cana",itens:[["Caldo de cana – Copo 400ml", "Gelado, na hora", 8, "🥤", "#9bd38a"], ["Caldo de cana – Copo 700ml", "Gelado, na hora", 14, "🥤", "#9bd38a"], ["Caldo de cana – Jarra 1L", "Gelado, na hora", 20, "🥤", "#9bd38a"], ["Caldo de cana – Garrafa p/ viagem 500ml", "Gelado, na hora", 10, "🥤", "#9bd38a"], ["Caldo de cana – Garrafa p/ viagem 1L", "Gelado, na hora", 20, "🥤", "#9bd38a"]]},{cat:"Outras bebidas",itens:[["Limão", "", 8, "🍋", "#c9e07a"], ["Guaraná ralado", "", 8, "🥤", "#b58bd8"], ["Água s/ gás", "", 4, "💧", "#8fd0ee"], ["Água c/ gás", "", 4, "💧", "#8fd0ee"]]}];
+var MENU=[{cat:"⭐ Sugestões da casa",hide:true,itens:[["Pastel Tudão", "Carne, queijo, pizza e frango. Opção de Catupiry ou cheddar", 23, "🥟", "#e9a35f"], ["Pastel X-Tudão", "Carne, queijo, pizza, frango, ovo, palmito e carne seca", 25, "🥟", "#e58f4f"]]},{cat:"Pastéis tradicionais",itens:[["Carne", "Pastel tradicional", 12, "🥟", "#f4a261"], ["Frango", "Pastel tradicional", 12, "🥟", "#f4a261"], ["Queijo", "Pastel tradicional", 12, "🥟", "#f4a261"], ["Queijo com orégano", "Pastel tradicional", 12, "🥟", "#f4a261"], ["Pizza", "Pastel tradicional", 12, "🥟", "#f4a261"], ["Pastel de Vento", "Crocante, sem recheio", 6, "🥟", "#f6c453"]]},{cat:"Pastéis especiais",itens:[["Palmito", "", 15, "🌿", "#8fc77a"], ["Palmito c/ pizza", "", 17, "🌿", "#8fc77a"], ["Palmito c/ queijo", "", 17, "🌿", "#8fc77a"], ["Palmito c/ carne", "", 17, "🌿", "#8fc77a"], ["Palmito c/ frango", "", 17, "🌿", "#8fc77a"], ["Palmito c/ Catupiry ou cheddar", "", 17, "🌿", "#8fc77a"], ["Palmito c/ ovo", "", 17, "🌿", "#8fc77a"], ["Carne c/ ovo", "", 16, "🥚", "#f2cf66"], ["Queijo c/ ovo", "", 16, "🥚", "#f2cf66"], ["Frango c/ ovo", "", 16, "🥚", "#f2cf66"], ["Pizza c/ ovo", "", 16, "🥚", "#f2cf66"], ["Carne seca", "", 17, "🥩", "#d9825b"], ["Carne seca c/ queijo", "", 18, "🥩", "#d9825b"], ["Carne seca c/ banana", "", 18, "🍌", "#d9825b"]]},{cat:"Pastéis mistos",itens:[["Carne c/ queijo", "", 16, "🥟", "#e9a35f"], ["Frango c/ Catupiry ou cheddar", "", 16, "🥟", "#e9a35f"], ["Carne c/ frango", "", 16, "🥟", "#e9a35f"], ["Carne c/ Catupiry ou cheddar", "", 16, "🥟", "#e9a35f"], ["Frango c/ queijo", "", 16, "🥟", "#e9a35f"], ["Frango c/ pizza", "", 16, "🥟", "#e9a35f"], ["Pizza c/ Catupiry ou cheddar", "", 16, "🥟", "#e9a35f"], ["Queijo c/ Catupiry ou cheddar", "", 16, "🥟", "#e9a35f"], ["Carne c/ pizza", "", 16, "🥟", "#e9a35f"]]},{cat:"Pastéis doces",itens:[["Chocolate", "", 10, "🍫", "#a8704f"], ["Chocolate Branco", "", 10, "🍫", "#a8704f"], ["Beijinho", "", 10, "🍫", "#a8704f"], ["Romeu e Julieta", "", 10, "🍫", "#a8704f"], ["Nutella", "Nutella é vida!", 15, "🍫", "#8a5a3c"]]},{cat:"Suco de laranja",itens:[["Suco de laranja – Copo 400ml", "Natural e refrescante", 8, "🍊", "#f5a65b"], ["Suco de laranja – Copo 700ml", "Natural e refrescante", 14, "🍊", "#f5a65b"], ["Suco de laranja – Jarra 1L", "Natural e refrescante", 20, "🍊", "#f5a65b"], ["Suco de laranja – Garrafa p/ viagem 500ml", "Natural e refrescante", 10, "🍊", "#f5a65b"], ["Suco de laranja – Garrafa p/ viagem 1L", "Natural e refrescante", 20, "🍊", "#f5a65b"]]},{cat:"Caldo de cana",itens:[["Caldo de cana – Copo 400ml", "Gelado, na hora", 8, "🥤", "#9bd38a"], ["Caldo de cana – Copo 700ml", "Gelado, na hora", 14, "🥤", "#9bd38a"], ["Caldo de cana – Jarra 1L", "Gelado, na hora", 20, "🥤", "#9bd38a"], ["Caldo de cana – Garrafa p/ viagem 500ml", "Gelado, na hora", 10, "🥤", "#9bd38a"], ["Caldo de cana – Garrafa p/ viagem 1L", "Gelado, na hora", 20, "🥤", "#9bd38a"]]},{cat:"Outras bebidas",itens:[["Limão", "", 8, "🍋", "#c9e07a"], ["Guaraná ralado", "", 8, "🥤", "#b58bd8"], ["Água s/ gás", "", 4, "💧", "#8fd0ee"], ["Água c/ gás", "", 4, "💧", "#8fd0ee"]]}];
 var qty={},obs={},mode="mesa";
 var $=function(i){return document.getElementById(i)};
 var brl=function(v){return "R$ "+v.toFixed(2).replace(".",",")};
+// FOTOS: dono/supervisor trocam pelo app (📷). Ao "Salvar app com as fotos", elas ficam gravadas aqui.
+var FOTOS={}; // fotos fixas
+var fotoLocal={};try{fotoLocal=JSON.parse(localStorage.getItem("jp_fotos")||"{}")}catch(e){}
+function foto(n){return fotoLocal[n]===""?"":(fotoLocal[n]||FOTOS[n]||"")}
+function imgBox(it,k,q){var f=foto(it[0]),ed=window.cur&&cur.r!="func";
+  return "<div class='img"+(f?" ph":"")+"' style='background:"+(f?"url("+f+") center/cover,":"radial-gradient(circle at 30% 25%,rgba(255,255,255,.45),transparent 60%),")+it[4]+"'>"+(f?"":it[3])+(ed?"<button class='cam' data-cam='"+k+"' type='button' aria-label='Trocar foto'>📷</button>":"")+stepper(k,q)+"</div>"}
 function stepper(k,q){return "<div class='add'>"+(q?"<button data-k='"+k+"' data-d='-1' type='button'>−</button><b>"+q+"</b>":"")+"<button data-k='"+k+"' data-d='1' type='button'>+</button></div>"}
 function totals(){var n=0,t=0;MENU.forEach(function(g,gi){g.itens.forEach(function(it,ii){var q=qty[gi+"-"+ii]||0;n+=q;t+=q*it[2]})});return[n,t]}
 function render(){
   var h="",tb="";
   MENU.forEach(function(g,gi){
-    tb+="<button data-go='s"+gi+"' type='button'"+(gi==0?" class='on'":"")+">"+g.cat+"</button>";
+    if(g.hide)return; // seção escondida (hide:true)
+    tb+="<button data-go='s"+gi+"' type='button'"+(!tb?" class='on'":"")+">"+g.cat+"</button>";
     h+="<h2 id='s"+gi+"'>"+g.cat+"</h2><div class='grid'>";
     g.itens.forEach(function(it,ii){
       var k=gi+"-"+ii,q=qty[k]||0;
       h+="<div class='card'><div class='info'><b>"+it[0]+"</b><span>"+it[1]+"</span><em>"+brl(it[2])+"</em></div>"+
-      "<div class='img' style='background:radial-gradient(circle at 30% 25%,rgba(255,255,255,.45),transparent 60%),"+it[4]+"'>"+it[3]+stepper(k,q)+"</div></div>";
+      imgBox(it,k,q)+"</div>";
     });
     h+="</div>";
   });
@@ -392,7 +399,7 @@ function enter(u){
 }
 function logout(){cur=null;owner=false;$("pveil").style.display="none";$("veil").style.display="none";qty={};obs={};render();try{sessionStorage.removeItem("jp_cur")}catch(e){}var c=$("vCx");if(c)c.remove();go("ped");drawLogin()}
 $("lock").onclick=function(){
-  sheet("<h3>👤 "+esc(cur.n)+"</h3><p style='color:var(--mut)'>"+RN[cur.r]+"</p>"+(boss()?"<button class='big' data-a='uteam' type='button' style='background:var(--ink);color:var(--bg)'>👥 Equipe e logins</button>":"")+"<button class='big' data-a='uout' type='button' style='background:var(--brand)'>Sair</button><button class='ghost' data-a='x' type='button'>Fechar</button>");
+  sheet("<h3>👤 "+esc(cur.n)+"</h3><p style='color:var(--mut)'>"+RN[cur.r]+"</p>"+(boss()?"<button class='big' data-a='uteam' type='button' style='background:var(--ink);color:var(--bg)'>👥 Equipe e logins</button><button class='big' data-a='fexp' type='button' style='background:#2f6fd2'>📤 Salvar app com as fotos</button>":"")+"<button class='big' data-a='uout' type='button' style='background:var(--brand)'>Sair</button><button class='ghost' data-a='x' type='button'>Fechar</button>");
 };
 // quem pode mexer em quem: dono mexe em todos; supervisor só em funcionários
 function canEdit(u){return cur.r=="dono"||(cur.r=="sup"&&u.r=="func")}
@@ -481,6 +488,51 @@ var _go3=go;go=function(v){_go3(v);$("levar").style.display=v=="levar"?"block":"
 setInterval(function(){if(view=="levar"&&$("pveil").style.display!="block")renderLv()},30000);
 lvBadge();
 </script>
-<script>if('serviceWorker' in navigator)window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})});</script>
+<style>
+.cam{position:absolute;left:6px;top:6px;width:34px;height:34px;border-radius:50%;border:0;background:rgba(0,0,0,.55);font-size:16px;display:grid;place-items:center;padding:0}
+.camimg{width:100%;max-height:240px;object-fit:cover;border-radius:14px;margin-bottom:6px}
+label.big{display:block;text-align:center}
+</style>
+<script>
+// EDITAR FOTOS (dono e supervisor)
+var camK=null;
+function itemOf(k){var p=k.split("-");return MENU[p[0]].itens[p[1]]}
+function saveF(){try{localStorage.setItem("jp_fotos",JSON.stringify(fotoLocal));return true}catch(e){return false}}
+function camSheet(k,msg){camK=k;var it=itemOf(k),f=foto(it[0]),g=MENU[k.split("-")[0]];
+  sheet("<h3>📷 "+esc(it[0])+"</h3>"+(f?"<img class='camimg' src='"+f+"' alt=''>":"<p style='color:var(--mut)'>Este item ainda não tem foto.</p>")+(msg?"<div class='troco'>"+msg+"</div>":"")+
+  "<label class='big' style='background:var(--brand)'>"+(f?"Trocar foto":"Escolher foto")+"<input id='camf' type='file' accept='image/*' style='display:none'></label>"+
+  (f?"<button class='big' data-a='camall' type='button' style='background:var(--ink);color:var(--bg)'>Usar esta foto em toda a seção<br><small style='font-weight:500'>"+esc(g.cat)+"</small></button><button class='big' data-a='camdel' type='button' style='background:var(--line);color:var(--brand)'>Remover foto</button>":"")+
+  "<button class='ghost' data-a='x' type='button'>Fechar</button>")}
+function shrink(file,cb){var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var S=360,s=Math.max(S/im.width,S/im.height),w=Math.round(im.width*s),h=Math.round(im.height*s),c=document.createElement("canvas");c.width=S;c.height=S;c.getContext("2d").drawImage(im,(S-w)/2,(S-h)/2,w,h);cb(c.toDataURL("image/jpeg",.72))};im.onerror=function(){cb(null)};im.src=r.result};r.readAsDataURL(file)}
+$("menu").addEventListener("click",function(e){var b=e.target.closest(".cam");if(b)camSheet(b.dataset.cam)});
+$("psheet").addEventListener("change",function(e){
+  if(e.target.id!="camf"||!e.target.files[0])return;var k=camK,n=itemOf(k)[0],old=fotoLocal[n];
+  shrink(e.target.files[0],function(d){
+    if(!d){camSheet(k,"Não consegui abrir essa foto. Tente outra.");return}
+    fotoLocal[n]=d;if(!saveF()){if(old===undefined)delete fotoLocal[n];else fotoLocal[n]=old;camSheet(k,"Memória do celular cheia para fotos. Remova algumas.");return}
+    render();camSheet(k,"✅ Foto salva!")});
+});
+$("psheet").addEventListener("click",function(e){
+  var b=e.target.closest("button");if(!b)return;var a=b.dataset.a;
+  if(a=="camdel"){fotoLocal[itemOf(camK)[0]]="";saveF();render();camSheet(camK,"Foto removida.")}
+  else if(a=="camall"){var f=foto(itemOf(camK)[0]),bk=JSON.stringify(fotoLocal);MENU[camK.split("-")[0]].itens.forEach(function(it){fotoLocal[it[0]]=f});
+    if(!saveF()){fotoLocal=JSON.parse(bk);camSheet(camK,"Memória cheia.");return}render();camSheet(camK,"✅ Foto aplicada em toda a seção.")}
+  else if(a=="fexp")exportApp();
+});
+// Gera um ja-pona.html novo com as fotos gravadas, pra enviar ao GitHub
+function exportApp(){
+  var mg={},n;for(n in FOTOS)mg[n]=FOTOS[n];for(n in fotoLocal){if(fotoLocal[n])mg[n]=fotoLocal[n];else delete mg[n]}
+  sheet("<h3>📤 Salvando app…</h3><p style='color:var(--mut)'>Preparando o arquivo com as fotos.</p>");
+  fetch(location.href.split("#")[0].split("?")[0],{cache:"no-store"}).then(function(r){if(!r.ok)throw 0;return r.text()}).then(function(src){
+    var i=src.indexOf("var FOTOS="),j=src.indexOf("; // fotos fixas",i);if(i<0||j<0)throw 0;
+    var out=src.slice(0,i)+"var FOTOS="+JSON.stringify(mg)+src.slice(j),file=new File([out],"ja-pona.html",{type:"text/html"});
+    function done(){sheet("<h3>✅ Arquivo pronto</h3><p>Agora envie o <b>ja-pona.html</b> para o GitHub (Japona- → ⋯ → Upload files → Commit changes). Em uns 2 minutos, as fotos aparecem em todos os celulares.</p><button class='big' data-a='x' type='button'>Entendi</button>")}
+    if(navigator.canShare&&navigator.canShare({files:[file]})){
+      sheet("<h3>📤 Arquivo pronto</h3><p>Toque abaixo e escolha <b>Salvar em Arquivos</b>.</p><button class='big' id='shr' type='button'>Salvar ja-pona.html</button><button class='ghost' data-a='x' type='button'>Cancelar</button>");
+      $("shr").onclick=function(){navigator.share({files:[file]}).then(done).catch(function(){})};
+    }else{var a=document.createElement("a");a.href=URL.createObjectURL(file);a.download="ja-pona.html";document.body.appendChild(a);a.click();a.remove();done()}
+  }).catch(function(){sheet("<h3>Não deu para salvar aqui</h3><p>Abra o app pelo link do GitHub (o ícone na tela inicial) e tente de novo, com internet.</p><button class='big' data-a='x' type='button'>OK</button>")});
+}
+</script>
 </body>
 </html>
