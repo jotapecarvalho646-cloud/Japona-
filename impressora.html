@@ -102,14 +102,14 @@ document.addEventListener("click",function(e){var b=e.target.closest("button");i
 try{$("uma").checked=localStorage.getItem("jp_uma")=="1"}catch(e){}
 $("uma").onchange=function(){try{localStorage.setItem("jp_uma",this.checked?"1":"0")}catch(e){}pump()};
 // ---------- Fila (banco online) ----------
-var jobs={},busy=false,FB=null;
+var jobs={},busy=false,again=false,FB=null;
 function alvo(d){if(PR[d])return d;if($("uma").checked){var o=d=="pastel"?"suco":"pastel";if(PR[o])return o}return null}
-async function pump(){if(busy||!FB)return;busy=true;
+async function pump(){if(!FB)return;if(busy){again=true;return}busy=true;again=false;
   try{var list=Object.keys(jobs).map(function(k){return jobs[k]}).filter(function(j){return j.status=="novo"}).sort(function(a,b){return a.t-b.t});
     for(var i=0;i<list.length;i++){var j=list[i],d=alvo(j.dest);if(!d)continue;
       j.status="imprimindo";try{await send(d,ticket(j));await FB.db.collection("impressoes").doc(j.id).set({status:"ok",impressoEm:Date.now()},{merge:true})}
       catch(e){j.status="novo";alert2(d,"Erro ao imprimir: "+(e.message||e))}}
-  }finally{busy=false;drawLog()}}
+  }finally{busy=false;drawLog();if(again){again=false;setTimeout(pump,50)}}}
 function reprint(id){var j=jobs[id];if(!j)return;var d=alvo(j.dest);if(!d){alert2(j.dest,"Conecte a impressora pra reimprimir.");return}send(d,ticket(j)).catch(function(e){alert2(d,"Falhou: "+e.message)})}
 function hm(t){var x=new Date(t);return("0"+x.getHours()).slice(-2)+":"+("0"+x.getMinutes()).slice(-2)}
 function drawLog(){var l=Object.keys(jobs).map(function(k){return jobs[k]}).sort(function(a,b){return b.t-a.t}),pend=l.filter(function(j){return j.status!="ok"}).length;
