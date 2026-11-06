@@ -222,7 +222,7 @@ function drawTroco(){var i=$("rec");if(!i)return;pay.rec=i.value;var v=recv();$(
 function confirmPay(){
   var v=recv();if(pay.m=="Dinheiro"&&v&&v<pay.tot){drawTroco();return}
   var tr=pay.m=="Dinheiro"&&v?v-pay.tot:0;
-  sales.push({v:pay.tot,m:pay.m,t:Date.now(),w:pay.title,u:(window.cur?cur.n:"")});if(pay.lv){lv.forEach(function(x){if(x.id==pay.lv)x.pd=true});saveLv();lvBadge();if(view=="levar")renderLv()}if(pay.n)delete acc[pay.n];save();renderMesas();drawPick();
+  var _t=Date.now();sales.push({id:_t+"-"+Math.random().toString(36).slice(2,7),v:pay.tot,m:pay.m,t:_t,w:pay.title,u:(window.cur?cur.n:""),o:pay.o,obs:(pay.n?(acc[pay.n]||{}).obs:last.obs)||{}});if(pay.lv){lv.forEach(function(x){if(x.id==pay.lv)x.pd=true});saveLv();lvBadge();if(view=="levar")renderLv()}if(pay.n)delete acc[pay.n];save();renderMesas();drawPick();
   sheet("<h3>✅ Pagamento recebido</h3><p>"+pay.title+" · "+pay.m+" · <b>"+brl(pay.tot)+"</b></p>"+(tr>0?"<div class='troco'>Dar de troco: "+brl(tr)+"</div>":"")+"<button class='big' data-a='x' type='button'>Pronto</button>");
 }
 $("psheet").addEventListener("click",function(e){
@@ -435,7 +435,8 @@ $("psheet").addEventListener("click",function(e){
   }
 });
 $("caixa").addEventListener("click",function(e){var b=e.target.closest("button");if(b&&b.id=="team")team()});
-(function(){var id=null;try{id=sessionStorage.getItem("jp_cur")}catch(e){}var u=users.filter(function(x){return String(x.id)==id})[0];if(u)enter(u);else drawLogin()})();
+function startLogin(){var id=null;try{id=sessionStorage.getItem("jp_cur")}catch(e){}var u=users.filter(function(x){return String(x.id)==id})[0];if(u)enter(u);else drawLogin()}
+$("login").style.display="flex";
 </script>
 <style>
 .lvc{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px;border-left:6px solid #e8890c}
@@ -541,5 +542,94 @@ function exportApp(){
 .views button{flex:1 0 auto;white-space:nowrap;padding:10px 12px!important;font-size:15px;line-height:1.2;border-radius:12px}
 .hero h1{font-size:20px}
 </style>
+<script>
+// ===== BANCO ONLINE (Firebase) — compartilhado pelos apps Ja-pona =====
+var FB_CFG={apiKey:"AIzaSyBuFJ3SLBn1dVZPb-wSpMPkIZ8j9NvxLbA",authDomain:"japona-252c3.firebaseapp.com",projectId:"japona-252c3",storageBucket:"japona-252c3.firebasestorage.app",messagingSenderId:"892710734164",appId:"1:892710734164:web:8e0da9e3d675304cba60c1"};
+var SHOP_EMAIL="loja@japona.app",FBV="10.12.2";
+function fbLoad(cb){
+  if(window.firebase&&firebase.firestore)return cb(true);
+  var L=["app","auth","firestore"],i=0,done=false,tm=setTimeout(function(){if(!done){done=true;cb(false)}},12000);
+  (function nx(){if(i>=L.length){if(!done){done=true;clearTimeout(tm);cb(true)}return}
+    var s=document.createElement("script");s.src="https://www.gstatic.com/firebasejs/"+FBV+"/firebase-"+L[i++]+"-compat.js";
+    s.onload=nx;s.onerror=function(){if(!done){done=true;clearTimeout(tm);cb(false)}};document.head.appendChild(s)})();
+}
+function fbInit(){if(!firebase.apps.length)firebase.initializeApp(FB_CFG);var d=firebase.firestore();try{d.enablePersistence({synchronizeTabs:true}).catch(function(){})}catch(e){}return{auth:firebase.auth(),db:d}}
+function clean(o){return JSON.parse(JSON.stringify(o))}
+function fbErr(e){var c=(e&&e.code)||"";
+  if(/wrong-password|invalid-credential|invalid-login|user-not-found/.test(c))return "Senha da loja incorreta.";
+  if(/operation-not-allowed/.test(c))return "No Firebase, ative E-mail/senha em Authentication.";
+  if(/too-many/.test(c))return "Muitas tentativas. Espere um pouco.";
+  if(/network/.test(c))return "Sem internet. Tente de novo.";
+  if(/permission/.test(c))return "Sem permissão: confira as Regras do Firestore.";
+  return "Erro: "+(c||e);}
+function shopScreen(el,logo,title,onTry){
+  el.innerHTML="<div class='lg'><img src='"+logo+"' alt=''><h1>"+title+"</h1><p>Digite a <b>senha da loja</b> (só na primeira vez neste celular).</p><input id='shp' type='password' placeholder='Senha da loja' autocomplete='current-password'><div class='lerr' id='she'></div><button class='big' id='shb' type='button'>Conectar</button></div>";
+  el.style.display="flex";
+  var go=function(){var p=document.getElementById("shp").value;if(!p)return;document.getElementById("shb").textContent="Conectando…";onTry(p,function(msg){document.getElementById("she").textContent=msg;document.getElementById("shb").textContent="Conectar"})};
+  document.getElementById("shb").onclick=go;document.getElementById("shp").onkeydown=function(e){if(e.key=="Enter")go()};
+}
+function msgScreen(el,logo,title,msg,btns){
+  el.innerHTML="<div class='lg'><img src='"+logo+"' alt=''><h1>"+title+"</h1><p>"+msg+"</p>"+btns.map(function(b,i){return "<button class='big' data-mb='"+i+"' type='button'"+(i?" style='background:var(--line);color:var(--ink)'":"")+">"+b[0]+"</button>"}).join("")+"</div>";
+  el.style.display="flex";el.querySelectorAll("[data-mb]").forEach(function(x){x.onclick=btns[+x.dataset.mb][1]});
+}
+
+// ===== PEDIDOS: sincroniza com o banco online =====
+var FB=null,SY={mesas:{},levar:{},vendas:{},saidas:{},cfg:null},syncReady=false,loginStarted=false;
+var DIAS=62;
+function cacheAll(){try{localStorage.setItem("jp_pastel",JSON.stringify({acc:acc,sales:sales}));localStorage.setItem("jp_pastel_sai",JSON.stringify(sai));localStorage.setItem("jp_levar",JSON.stringify(lv));localStorage.setItem("jp_users",JSON.stringify(users))}catch(e){}}
+function syncCol(name,list,idf){var c=FB.db.collection(name),seen={};
+  list.forEach(function(x){var id=String(idf(x)),j=JSON.stringify(x);seen[id]=1;if(SY[name][id]!==j){SY[name][id]=j;c.doc(id).set(clean(x)).catch(onFbErr)}});
+  Object.keys(SY[name]).forEach(function(id){if(!seen[id]){delete SY[name][id];c.doc(id).delete().catch(onFbErr)}});}
+function pushAll(){if(!FB||!syncReady)return;
+  var m=[];Object.keys(acc).forEach(function(n){if(acc[n]){acc[n].n=Number(n);m.push(acc[n])}});
+  syncCol("mesas",m,function(x){return x.n});
+  syncCol("levar",lv,function(x){return x.id});
+  sales.forEach(function(s){if(!s.id)s.id=s.t+"-"+Math.random().toString(36).slice(2,7)});
+  syncCol("vendas",sales,function(x){return x.id});
+  syncCol("saidas",sai,function(x){return x.t});
+  var j=JSON.stringify(users);if(SY.cfg!==j){SY.cfg=j;FB.db.doc("loja/config").set({users:clean(users)}).catch(onFbErr)}}
+var _sv=save;save=function(){_sv();pushAll()};
+var _sx=saveX;saveX=function(){_sx();pushAll()};
+var _su=saveU;saveU=function(){_su();pushAll()};
+var _sl=saveLv;saveLv=function(){_sl();pushAll()};
+function onFbErr(e){console.log("fb",e);var b=$("netb");if(b){b.textContent="⚠️ "+fbErr(e);b.style.display="block"}}
+function refreshAll(){cacheAll();drawPick();lvBadge();
+  if(view=="mesas")renderMesas();if(view=="levar"&&$("pveil").style.display!="block")renderLv();if(view=="caixa"&&$("pveil").style.display!="block")renderCx();
+  if(cur){var me=users.filter(function(u){return u.id==cur.id})[0];if(!me){logout();return}if(me.r!=cur.r||me.n!=cur.n||me.p!=cur.p)enter(me)}
+  else if($("login").style.display!="none"&&!lsel&&loginStarted)drawLogin();}
+function listen(){
+  var db=FB.db,first={cfg:0},got=0,newDb=false,LOC=clean({acc:acc,lv:lv,sales:sales,sai:sai,users:users});
+  function ready(){if(++got<5)return;
+    if(newDb){acc=LOC.acc;lv=LOC.lv;sales=LOC.sales;sai=LOC.sai;users=LOC.users}
+    if(!syncReady){syncReady=true;pushAll()}cacheAll();if(!loginStarted){loginStarted=true;startLogin()}}
+  db.doc("loja/config").onSnapshot(function(d){
+    if(!d.exists){ // banco novo: sobe o que já existe neste celular
+      if(!first.cfg){first.cfg=1;newDb=true;SY.cfg=null;ready();return}
+    }else{users=(d.data().users)||[];SY.cfg=JSON.stringify(users)}
+    if(!first.cfg){first.cfg=1;ready()}else refreshAll();
+  },onFbErr);
+  function col(name,apply,q){var f=0;(q||db.collection(name)).onSnapshot(function(s){var a=[];SY[name]={};s.forEach(function(d){var x=d.data();a.push(x);SY[name][d.id]=JSON.stringify(x)});if(!(newDb&&!syncReady))apply(a);if(!f){f=1;ready()}else refreshAll()},onFbErr)}
+  col("mesas",function(a){acc={};a.forEach(function(x){acc[x.n]=x})});
+  col("levar",function(a){lv=a.sort(function(x,y){return x.t-y.t})});
+  col("vendas",function(a){sales=a.sort(function(x,y){return x.t-y.t})},db.collection("vendas").where("t",">=",Date.now()-DIAS*864e5));
+  col("saidas",function(a){sai=a},db.collection("saidas").where("t",">=",Date.now()-DIAS*864e5));
+}
+function syncStart(){
+  var L=$("login"),logo=LOGO,T="Ja-pona Pastelaria";
+  msgScreen(L,logo,T,"Conectando à loja…",[]);
+  fbLoad(function(ok){
+    if(!ok)return msgScreen(L,logo,T,"Sem internet para conectar à loja.",[["Tentar de novo",syncStart],["Usar só neste celular",function(){loginStarted=true;startLogin()}]]);
+    try{FB=fbInit()}catch(e){return msgScreen(L,logo,T,fbErr(e),[["Tentar de novo",syncStart]])}
+    var started=false;
+    FB.auth.onAuthStateChanged(function(u){
+      if(u){if(!started){started=true;msgScreen(L,logo,T,"Carregando dados da loja…",[]);listen()}}
+      else shopScreen(L,logo,T,function(p,fail){FB.auth.signInWithEmailAndPassword(SHOP_EMAIL,p).catch(function(e){fail(fbErr(e))})});
+    });
+  });
+}
+(function(){var b=document.createElement("div");b.id="netb";b.style.cssText="display:none;position:fixed;left:10px;right:10px;top:10px;z-index:40;background:#d23c2f;color:#fff;font-weight:700;padding:10px 14px;border-radius:12px;text-align:center";b.onclick=function(){b.style.display="none"};document.body.appendChild(b)})();
+syncStart();
+
+</script>
 </body>
 </html>
