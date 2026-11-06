@@ -241,13 +241,14 @@ $("send").onclick=function(){
   var who=mode=="mesa"?"MESA "+sel:"LEVAR: "+($("who").value.trim()||"(sem nome)").toUpperCase();
   // Separa o pedido: bebidas (suco, caldo de cana, outras bebidas) vão para a impressora do SUCO; o resto vai para a do PASTEL
   var sP="",sS="",o={};
-  MENU.forEach(function(g,gi){var beb=/suco|caldo|bebida/i.test(g.cat);g.itens.forEach(function(it,ii){var k=gi+"-"+ii,q=qty[k]||0;if(q){var l=q+"x "+it[0]+"\n"+(obs[k]?"<b>&gt;&gt; OBS: "+obs[k].toUpperCase()+"</b>\n":"");if(beb)sS+=l;else sP+=l;o[k]=q}})});
+  var jP=[],jS=[];
+  MENU.forEach(function(g,gi){var beb=/suco|caldo|bebida/i.test(g.cat);g.itens.forEach(function(it,ii){var k=gi+"-"+ii,q=qty[k]||0;if(q){var l=q+"x "+it[0]+"\n"+(obs[k]?"<b>&gt;&gt; OBS: "+obs[k].toUpperCase()+"</b>\n":"");if(beb){sS+=l;jS.push([q,it[0],obs[k]||""])}else{sP+=l;jP.push([q,it[0],obs[k]||""])}o[k]=q}})});
   function tk(cls,titulo,sec,body){return "<div><div class='tkh "+cls+"'>🖨️ "+titulo+"</div><div class='paper'>JA-PONA PASTELARIA\n"+hh+"\n<hr>"+who+"\n<hr><b>"+sec+"</b>\n"+body+"</div></div>"}
   var s=(sP?tk("pastel","Impressora do PASTEL","PASTÉIS",sP):"")+(sS?tk("suco","Impressora do SUCO","BEBIDAS",sS):"");
   var ob={};Object.keys(o).forEach(function(k){if(obs[k])ob[k]=obs[k]});
   // 1º mostra pra conferir; só grava e envia depois de "Confirmar e enviar"
   var md=mode,ms=sel,nm=$("who").value.trim();
-  pendingSend=function(){mode=md;sel=ms;
+  pendingSend=function(){mode=md;sel=ms;filaImpressao(who,hh,jP,jS);
   if(mode=="mesa"){var tb=acc[sel]||(acc[sel]={items:{},t:Date.now()});tb.obs=tb.obs||{};Object.keys(o).forEach(function(k){tb.items[k]=(tb.items[k]||0)+o[k];if(ob[k])tb.obs[k]=(tb.obs[k]?tb.obs[k]+"; ":"")+ob[k]});save()}
   last={o:o,who:who,obs:ob};
   if(mode=="levar"){var lid=Date.now();lv.push({id:lid,n:(nm||"(sem nome)"),t:lid,o:o,obs:ob,pd:false});saveLv();last.lv=lid;lvBadge()}
@@ -650,5 +651,11 @@ button,.card,.mt,.cm,.tabs,.views,.img{-webkit-user-select:none;user-select:none
 input,textarea,select{font-size:16px!important}
 </style>
 <style>#ticket{background:rgba(0,0,0,.88)}.tkst{grid-column:1/-1;text-align:center;color:#fff;font-weight:800;font-size:18px;padding:4px 0}.tkst.ok{color:#8ce99a}</style>
+<script>
+// ===== FILA DE IMPRESSÃO: o iPhone do balcão (página Impressora, no Bluefy) imprime =====
+function filaImpressao(who,hh,jP,jS){if(!window.FB||!FB.db)return;var t=Date.now(),u=(window.cur&&cur.n)||"";
+  [["pastel",jP],["suco",jS]].forEach(function(x){if(!x[1].length)return;var id=t+"-"+x[0];
+    FB.db.collection("impressoes").doc(id).set({id:id,t:t,dest:x[0],quem:who,hora:hh,atendente:u,itens:x[1].map(function(i){return{q:i[0],n:i[1],obs:i[2]}}),status:"novo"}).catch(function(e){console.log(e)})})}
+</script>
 </body>
 </html>
