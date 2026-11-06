@@ -245,14 +245,25 @@ $("send").onclick=function(){
   function tk(cls,titulo,sec,body){return "<div><div class='tkh "+cls+"'>🖨️ "+titulo+"</div><div class='paper'>JA-PONA PASTELARIA\n"+hh+"\n<hr>"+who+"\n<hr><b>"+sec+"</b>\n"+body+"</div></div>"}
   var s=(sP?tk("pastel","Impressora do PASTEL","PASTÉIS",sP):"")+(sS?tk("suco","Impressora do SUCO","BEBIDAS",sS):"");
   var ob={};Object.keys(o).forEach(function(k){if(obs[k])ob[k]=obs[k]});
+  // 1º mostra pra conferir; só grava e envia depois de "Confirmar e enviar"
+  var md=mode,ms=sel,nm=$("who").value.trim();
+  pendingSend=function(){mode=md;sel=ms;
   if(mode=="mesa"){var tb=acc[sel]||(acc[sel]={items:{},t:Date.now()});tb.obs=tb.obs||{};Object.keys(o).forEach(function(k){tb.items[k]=(tb.items[k]||0)+o[k];if(ob[k])tb.obs[k]=(tb.obs[k]?tb.obs[k]+"; ":"")+ob[k]});save()}
   last={o:o,who:who,obs:ob};
-  if(mode=="levar"){var lid=Date.now();lv.push({id:lid,n:($("who").value.trim()||"(sem nome)"),t:lid,o:o,obs:ob,pd:false});saveLv();last.lv=lid;lvBadge()}
-  $("paper").innerHTML=s+"<div class='tktot'>Total do pedido: "+brl(x[1])+"</div>";$("ticket").style.display="block";$("charge").style.display=mode=="levar"?"block":"none";
+  if(mode=="levar"){var lid=Date.now();lv.push({id:lid,n:(nm||"(sem nome)"),t:lid,o:o,obs:ob,pd:false});saveLv();last.lv=lid;lvBadge()}
+  $("tkst").innerHTML="✅ Pedido enviado para a cozinha";$("tkst").className="tkst ok";
+  $("okSend").style.display="none";$("back").style.display="none";$("done").style.display="block";$("charge").style.display=mode=="levar"?"block":"none";
+  };
+  $("paper").innerHTML="<div class='tkst' id='tkst'>👀 Confira o pedido antes de enviar</div>"+s+"<div class='tktot'>Total do pedido: "+brl(x[1])+"</div>";$("ticket").style.display="block";
+  $("okSend").style.display="block";$("back").style.display="block";$("done").style.display="none";$("charge").style.display="none";$("ticket").scrollTop=0;
 };
+var pendingSend=null;
+(function(){var b=document.createElement("button");b.id="okSend";b.type="button";b.textContent="✅ Confirmar e enviar";b.style.background="var(--ok)";$("done").parentNode.insertBefore(b,$("done"));
+  b.onclick=function(){if(pendingSend){var f=pendingSend;pendingSend=null;f()}};
+  $("back").textContent="↩ Voltar e corrigir";$("back").onclick=function(){pendingSend=null;$("ticket").style.display="none"}})();
 var cb=document.createElement("button");cb.id="charge";cb.type="button";cb.textContent="💰 Cobrar agora";$("done").parentNode.insertBefore(cb,$("done"));
 function finish(){$("ticket").style.display="none";$("veil").style.display="none";qty={};obs={};$("who").value="";render();renderMesas()}
-$("done").onclick=finish;$("back").style.display="none";
+$("done").onclick=finish;$("back").style.display="none";$("okSend").style.display="none";
 cb.onclick=function(){var o=last.o,w=last.who,l=last.lv;finish();openPay(w,o,null);pay.lv=l};
 setMode("mesa");render();
 </script>
@@ -638,5 +649,6 @@ html,body{touch-action:manipulation;-webkit-text-size-adjust:100%;overscroll-beh
 button,.card,.mt,.cm,.tabs,.views,.img{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 input,textarea,select{font-size:16px!important}
 </style>
+<style>#ticket{background:rgba(0,0,0,.88)}.tkst{grid-column:1/-1;text-align:center;color:#fff;font-weight:800;font-size:18px;padding:4px 0}.tkst.ok{color:#8ce99a}</style>
 </body>
 </html>
