@@ -85,7 +85,7 @@ input[type=text],input[type=password]{width:100%;padding:14px;border-radius:12px
 .live.off{color:var(--mut)}.live.off i{background:var(--mut)}
 </style>
 <div class="top" id="top" style="display:none"><div class="hd"><img id="tlogo" alt=""><h1>Comandas <small><span class="live" id="live"><i></i>ao vivo</span></small></h1><button class="me" id="me" type="button"></button></div>
-<div class="tabs"><button id="tC" class="on" type="button">🧾 Comandas</button><button id="tR" type="button">📊 Resumo</button></div></div>
+<div class="tabs"><button id="tC" class="on" type="button">🧾 Comandas</button><button id="tX" type="button">💵 Caixa</button><button id="tR" type="button">📊 Resumo</button></div></div>
 <main id="main"></main>
 <div class="veil" id="veil"><div class="sheet" id="sheet"></div></div>
 <div id="login"></div>
@@ -125,6 +125,7 @@ function renderC(){
   if(!l.length)h+="<div class='empty'><b>🧾</b>Nenhuma comanda "+(filt=="todas"?"aberta":"aqui")+" agora.</div>";
   else{h+="<div class='cg'>";l.forEach(function(c){var m=(Date.now()-c.t)/60000,it=lines(c.o);
     h+="<button class='cm"+(c.tipo=="levar"?" lv":"")+(c.pd?" pd":"")+"' data-c='"+c.tipo+":"+esc(c.id)+"' type='button'><div class='r1'><b>"+(c.tipo=="mesa"?"🍽️ ":"🛍️ ")+esc(c.nome)+"</b><span class='"+(m>=30?"late":"")+"'>"+hm(c.t)+" · "+mins(c.t)+"</span></div><div class='it'>"+it.map(function(x){return x[1]+"x "+esc(x[0])}).join(" · ")+"</div><div class='r2'><span class='tag"+(c.pd?" pd":c.tipo=="levar"?" lv":"")+"'>"+(c.pd?"PAGO":c.tipo=="mesa"?"MESA ABERTA":"A PAGAR")+"</span><strong>"+brl(tTot(c.o))+"</strong></div></button>"});h+="</div>"}
+  if(!cxAberto())h="<button class='warnb' id='goCx' type='button'>⚠️ O caixa está fechado. Toque aqui para abrir.</button>"+h;
   $("main").innerHTML=h;
 }
 function findC(key){var p=key.split(":"),t=p[0],id=p.slice(1).join(":");return comandas().filter(function(c){return c.tipo==t&&c.id==id})[0]}
@@ -195,9 +196,9 @@ function renderR(){
   for(var i=0;i<7;i++){var d=new Date();d.setDate(d.getDate()-i);var q=dayData(d);h+="<div class='line hist' data-t='"+d.getTime()+"'><div class='n'>"+dl(d)+"<small>"+q.e.length+" vendas"+(q.ts?" · saídas "+brl(q.ts):"")+"</small></div><b>"+brl(q.te-q.ts)+"</b></div>"}
   $("main").innerHTML=h+"</div>";
 }
-function render(){if(!cur)return;if(view=="c")renderC();else renderR();$("tC").className=view=="c"?"on":"";$("tR").className=view=="r"?"on":"";
+function render(){if(!cur)return;if(view=="c")renderC();else if(view=="x")renderX();else renderR();$("tC").className=view=="c"?"on":"";$("tR").className=view=="r"?"on":"";$("tX").className=view=="x"?"on":"";
   var n=comandas().length;$("tC").textContent="🧾 Comandas"+(n?" ("+n+")":"")}
-$("tC").onclick=function(){view="c";render();window.scrollTo(0,0)};$("tR").onclick=function(){view="r";day=new Date();render();window.scrollTo(0,0)};
+$("tC").onclick=function(){view="c";render();window.scrollTo(0,0)};$("tX").onclick=function(){view="x";render();window.scrollTo(0,0)};$("tR").onclick=function(){view="r";day=new Date();render();window.scrollTo(0,0)};
 setInterval(function(){if(cur&&view=="c"&&$("veil").style.display!="block")renderC()},30000);
 
 // ---- login (só dono e supervisor)
@@ -259,7 +260,7 @@ function refresh(){
   if($("veil").style.display=="block"){if(pay)drawPay();else{var k=$("sheet").querySelector("[data-k]");if(k&&!findC(k.dataset.k))closeSheet()}}
   render()}
 var started=false;
-function listen(){var db=FB.db,got=0;function ready(){if(++got==5&&!started){started=true;startLogin()}}
+function listen(){var db=FB.db,got=0;function ready(){if(++got==6&&!started){started=true;startLogin()}}
   function sub(q,apply){var f=0;q.onSnapshot(function(s){apply(s);var l=$("live");l.className="live";l.innerHTML="<i></i>ao vivo";if(!f){f=1;ready()}else refresh()},onErr)}
   sub(db.doc("loja/config"),function(d){users=d.exists?(d.data().users||[]):[]});
   sub(db.collection("mesas"),function(s){acc={};s.forEach(function(d){var x=d.data();acc[x.n||d.id]=x})});
@@ -267,6 +268,7 @@ function listen(){var db=FB.db,got=0;function ready(){if(++got==5&&!started){sta
   var since=Date.now()-62*864e5;
   sub(db.collection("vendas").where("t",">=",since),function(s){sales=[];s.forEach(function(d){sales.push(d.data())})});
   sub(db.collection("saidas").where("t",">=",since),function(s){sai=[];s.forEach(function(d){sai.push(d.data())})});
+  sub(db.collection("caixas").where("aberto",">=",since),function(s){caixas=[];s.forEach(function(d){caixas.push(d.data())})});
 }
 function boot(){var L=$("login"),T="Comandas";msgScreen(L,LOGO,T,"Conectando à loja…",[]);
   fbLoad(function(ok){if(!ok)return msgScreen(L,LOGO,T,"Sem internet. As comandas precisam de internet para aparecer ao vivo.",[["Tentar de novo",boot]]);
@@ -282,5 +284,61 @@ html,body{touch-action:manipulation;-webkit-text-size-adjust:100%;overscroll-beh
 button,.card,.mt,.cm,.tabs,.views,.img{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 input,textarea,select{font-size:16px!important}
 </style>
+
+<style>
+.warnb{display:block;width:100%;margin:0 0 12px;padding:12px;border-radius:14px;border:2px dashed var(--brand);background:none;color:var(--brand);font-weight:800}
+.cxbox{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px 16px;text-align:center;margin-bottom:14px}
+.cxbox h2{margin:6px 0 4px}.cxbox.open{text-align:left;padding:14px 16px;border-left:6px solid var(--ok)}
+.cxbox .r1{display:flex;justify-content:space-between;align-items:baseline;gap:8px}.cxbox .r1 span{color:var(--mut);font-size:14px}
+.dif{font-size:20px;font-weight:800;text-align:center;padding:12px;border-radius:12px;margin:8px 0;background:var(--bg)}
+.row2{display:flex;gap:8px}.row2 .big{flex:1}
+</style>
+<script>
+// ===== CAIXA: abertura, sangria e fechamento =====
+var caixas=[];
+function cxAberto(){return caixas.filter(function(c){return !c.fechado}).sort(function(a,b){return b.aberto-a.aberto})[0]}
+function cxVendas(c){var fim=c.fechado||Infinity;return sales.filter(function(s){return s.t>=c.aberto&&s.t<=fim})}
+function cxResumo(c){var v=cxVendas(c),m={"Dinheiro":0,"Pix":0,"Crédito":0,"Débito":0},tot=0,sg=0;v.forEach(function(s){m[s.m]=(m[s.m]||0)+s.v;tot+=s.v});(c.sangrias||[]).forEach(function(x){sg+=x.v});return{n:v.length,m:m,tot:tot,sg:sg,esp:(c.inicial||0)+m["Dinheiro"]-sg}}
+function num(id){var t=(($(id)||{}).value||"").trim();if(t.indexOf(",")>=0)t=t.replace(/\./g,"").replace(",",".");return parseFloat(t)||0}
+function dfull(t){var d=new Date(t);return dl(d)+" "+hm(t)}
+function renderX(){var c=cxAberto(),h="";
+  if(!c)h+="<div class='cxbox'><b style='font-size:46px'>🔒</b><h2>Caixa fechado</h2><p class='sub'>No começo do serviço, abra o caixa informando o dinheiro de troco que está na gaveta.</p><button class='big' id='cxOpen' type='button'>🔓 Abrir caixa</button></div>";
+  else{var r=cxResumo(c);
+    h+="<div class='cxbox open'><div class='r1'><b>🟢 Caixa aberto</b><span>desde "+hm(c.aberto)+" · por "+esc(c.por)+"</span></div></div>";
+    h+="<div class='kp'><div><small>Troco inicial</small><b>"+brl(c.inicial)+"</b></div><div><small>Vendido no caixa</small><b style='color:var(--ok)'>"+brl(r.tot)+"</b></div><div><small>Sangrias</small><b style='color:var(--brand)'>"+brl(r.sg)+"</b></div><div><small>Dinheiro na gaveta</small><b>"+brl(r.esp)+"</b></div></div>";
+    h+="<div class='row2'><button class='big' id='cxSang' type='button' style='background:var(--warn)'>➖ Fazer sangria</button><button class='big' id='cxClose' type='button' style='background:var(--brand)'>🔒 Fechar caixa</button></div>";
+    h+="<div class='ch'>Vendas desde a abertura · "+r.n+"</div><div class='pan'>";["Dinheiro","Pix","Crédito","Débito"].forEach(function(m){h+="<div class='line'><div class='n'>"+m+"</div><b>"+brl(r.m[m])+"</b></div>"});h+="</div>";
+    h+="<div class='ch'>Sangrias</div><div class='pan'>";if(!(c.sangrias||[]).length)h+="<p style='color:var(--mut);margin:10px 0'>Nenhuma sangria ainda.</p>";
+    (c.sangrias||[]).slice().reverse().forEach(function(x){h+="<div class='line'><div class='n'>"+esc(x.d||"Sangria")+"<small>"+hm(x.t)+" · "+esc(x.u||"")+"</small></div><b style='color:var(--brand)'>− "+brl(x.v)+"</b></div>"});h+="</div>";}
+  var hist=caixas.filter(function(x){return x.fechado}).sort(function(a,b){return b.aberto-a.aberto}).slice(0,15);
+  h+="<div class='ch'>Caixas anteriores</div><div class='pan'>";if(!hist.length)h+="<p style='color:var(--mut);margin:10px 0'>Nenhum caixa fechado ainda.</p>";
+  hist.forEach(function(x){var d=(x.contado||0)-(x.esperado||0);h+="<div class='line hist' data-cx='"+esc(x.id)+"'><div class='n'>"+dl(new Date(x.aberto))+" · "+hm(x.aberto)+"–"+hm(x.fechado)+"<small>Vendido "+brl(x.vendido)+" · "+(Math.abs(d)<0.005?"✅ bateu":d>0?"sobrou "+brl(d):"faltou "+brl(-d))+"</small></div><b>›</b></div>"});
+  $("main").innerHTML=h+"</div>";}
+function cxReport(x){var d=(x.contado||0)-(x.esperado||0),pf=x.porForma||{},h="<h3>🧾 Fechamento de caixa</h3><p class='sub'>"+dfull(x.aberto)+" até "+dfull(x.fechado)+"<br>Aberto por "+esc(x.por)+" · fechado por "+esc(x.fechadoPor||"")+"</p>";
+  h+="<div class='line'><div class='n'>Troco inicial</div><b>"+brl(x.inicial)+"</b></div>";
+  ["Dinheiro","Pix","Crédito","Débito"].forEach(function(m){h+="<div class='line'><div class='n'>Vendas · "+m+"</div><b>"+brl(pf[m]||0)+"</b></div>"});
+  h+="<div class='line'><div class='n'><b>Total vendido</b><small>"+(x.nVendas||0)+" vendas</small></div><b>"+brl(x.vendido)+"</b></div>";
+  (x.sangrias||[]).forEach(function(s){h+="<div class='line'><div class='n'>Sangria · "+esc(s.d||"")+"<small>"+hm(s.t)+" · "+esc(s.u||"")+"</small></div><b style='color:var(--brand)'>− "+brl(s.v)+"</b></div>"});
+  h+="<div class='line'><div class='n'>Dinheiro esperado na gaveta</div><b>"+brl(x.esperado)+"</b></div><div class='line'><div class='n'>Dinheiro contado</div><b>"+brl(x.contado)+"</b></div>";
+  h+="<div class='dif' style='color:"+(Math.abs(d)<0.005?"var(--ok)":"var(--brand)")+"'>"+(Math.abs(d)<0.005?"✅ O caixa bateu":d>0?"Sobrou "+brl(d):"Faltou "+brl(-d))+"</div>";
+  sheet(h+"<button class='big' data-a='x' type='button'>OK</button>")}
+function cxDiff(){var c=cxAberto(),t=$("cxdif");if(!c||!t)return;var r=cxResumo(c),v=num("cxcont");if(!$("cxcont").value){t.textContent="Conte o dinheiro da gaveta";t.style.color="var(--mut)";return}var d=v-r.esp;
+  t.textContent=Math.abs(d)<0.005?"✅ Bateu certinho":d>0?"Sobrando "+brl(d):"Faltando "+brl(-d);t.style.color=Math.abs(d)<0.005?"var(--ok)":"var(--brand)"}
+$("main").addEventListener("click",function(e){var b=e.target.closest("button"),r=e.target.closest("[data-cx]");
+  if(b&&b.id=="goCx"){view="x";render();return}
+  if(b&&b.id=="cxOpen")sheet("<h3>🔓 Abrir caixa</h3><p class='sub'>Quanto de dinheiro (troco) tem na gaveta agora?</p><input id='cxini' type='text' inputmode='decimal' placeholder='Ex.: 100,00'><button class='big' data-a='cxOpenOk' type='button'>Abrir caixa</button><button class='ghost' data-a='x' type='button'>Cancelar</button>");
+  else if(b&&b.id=="cxSang")sheet("<h3>➖ Sangria</h3><p class='sub'>Retirada de dinheiro da gaveta.</p><input id='cxsv' type='text' inputmode='decimal' placeholder='Valor (R$)'><input id='cxsd' type='text' placeholder='Motivo (ex.: depósito, pagar fornecedor)' autocomplete='off'><button class='big' data-a='cxSangOk' type='button' style='background:var(--warn)'>Registrar sangria</button><button class='ghost' data-a='x' type='button'>Cancelar</button>");
+  else if(b&&b.id=="cxClose"){var c=cxAberto();if(!c)return;var q=cxResumo(c);
+    sheet("<h3>🔒 Fechar caixa</h3><p class='sub'>Aberto às "+hm(c.aberto)+" por "+esc(c.por)+"</p><div class='line'><div class='n'>Troco inicial</div><b>"+brl(c.inicial)+"</b></div><div class='line'><div class='n'>+ Vendas em dinheiro</div><b>"+brl(q.m["Dinheiro"])+"</b></div><div class='line'><div class='n'>− Sangrias</div><b>"+brl(q.sg)+"</b></div><div class='sum'><span>Deve ter na gaveta</span><span>"+brl(q.esp)+"</span></div><input id='cxcont' type='text' inputmode='decimal' placeholder='Quanto você contou na gaveta? (R$)'><div class='dif' id='cxdif'>Conte o dinheiro da gaveta</div><button class='big' data-a='cxCloseOk' type='button' style='background:var(--brand)'>Fechar caixa</button><button class='ghost' data-a='x' type='button'>Cancelar</button>")}
+  else if(r){var x=caixas.filter(function(y){return y.id==r.dataset.cx})[0];if(x)cxReport(x)}
+});
+$("sheet").addEventListener("input",function(e){if(e.target.id=="cxcont")cxDiff()});
+$("sheet").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;var a=b.dataset.a,db=FB.db;
+  if(a=="cxOpenOk"){if(cxAberto())return closeSheet();var t=Date.now(),id="cx"+t;db.collection("caixas").doc(id).set({id:id,aberto:t,por:cur.n,inicial:num("cxini"),sangrias:[]}).catch(onErr);closeSheet();view="x"}
+  else if(a=="cxSangOk"){var c=cxAberto(),v=num("cxsv");if(!c||v<=0)return;var l=(c.sangrias||[]).concat([{v:v,d:$("cxsd").value.trim()||"Sangria",t:Date.now(),u:cur.n}]);db.collection("caixas").doc(c.id).set({sangrias:l},{merge:true}).catch(onErr);closeSheet()}
+  else if(a=="cxCloseOk"){var c2=cxAberto();if(!c2)return closeSheet();if(!$("cxcont").value.trim()){$("cxcont").focus();return}var q=cxResumo(c2),f={fechado:Date.now(),fechadoPor:cur.n,contado:num("cxcont"),esperado:q.esp,vendido:q.tot,porForma:q.m,nVendas:q.n};
+    db.collection("caixas").doc(c2.id).set(f,{merge:true}).catch(onErr);var rep=Object.assign({},c2,f);cxReport(rep)}
+});
+</script>
 </body>
 </html>
