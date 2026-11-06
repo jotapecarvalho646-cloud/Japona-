@@ -1,3 +1,4 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -165,6 +166,7 @@ render();
 .mt{border:0;border-radius:18px;padding:18px 10px;text-align:center;color:#fff;font-weight:800;min-height:112px}
 .mt.free{background:#2f9e44}.mt.busy{background:#d23c2f}
 .mt .nb{display:block;font-size:32px}.mt small{display:block;font-weight:600;margin-top:4px}
+.nmctl{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin-top:14px}.nmctl span{flex:1;color:var(--mut)}.nmctl b{color:var(--ink);font-size:18px}.nmctl button{width:46px;height:46px;border-radius:50%;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:20px}.nmctl button:disabled{opacity:.3}
 .legend{display:flex;gap:16px;color:var(--mut);font-size:14px;margin:10px 2px 14px}
 .mpick{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:8px}
 .mpick button{padding:12px 0;border-radius:12px;border:3px solid transparent;color:#fff;font-weight:800}
@@ -183,6 +185,8 @@ render();
 // MESAS E PAGAMENTO
 var NM=10,acc={},sales=[],sel=1,view="ped",pay=null,last={};
 try{var sv=JSON.parse(localStorage.getItem("jp_pastel")||"{}");acc=sv.acc||{};sales=sv.sales||[]}catch(e){}
+try{if(localStorage.getItem("jp_nm_v")!="10"){localStorage.setItem("jp_nm","10");localStorage.setItem("jp_nm_v","10")}NM=Number(localStorage.getItem("jp_nm"))||10}catch(e){}
+function saveNM(){try{localStorage.setItem("jp_nm",NM)}catch(e){}}
 function save(){try{localStorage.setItem("jp_pastel",JSON.stringify({acc:acc,sales:sales}))}catch(e){}}
 function lines(o){var a=[];Object.keys(o).forEach(function(k){var p=k.split("-"),it=(MENU[p[0]]||{itens:[]}).itens[p[1]];if(it)a.push([it[0],o[k],it[2],k])});return a}
 function tTot(o){var t=0;lines(o).forEach(function(l){t+=l[1]*l[2]});return t}
@@ -194,11 +198,12 @@ function renderMesas(){
   var h="<div class='legend'><span>🟢 Livre</span><span>🔴 Ocupada</span></div><div class='mgrid'>";
   for(var i=1;i<=NM;i++){var b=acc[i];h+="<button class='mt "+(b?"busy":"free")+"' data-m='"+i+"' type='button'><span class='nb'>"+i+"</span><small>"+(b?brl(tTot(b.items)):"Livre")+"</small></button>"}
   var td=0,hoje=new Date().toDateString();sales.forEach(function(s){if(new Date(s.t).toDateString()==hoje)td+=s.v});
-  $("mesas").innerHTML=h+"</div>"+(window.cur&&cur.r!="func"?"<p class='legend'>Vendido hoje: <b style='color:var(--ink)'>"+brl(td)+"</b></p>":"");
+  var adm=typeof boss=="function"&&window.cur&&boss();
+  $("mesas").innerHTML=h+"</div>"+(adm?"<div class='nmctl'><span>Quantidade de mesas: <b>"+NM+"</b></span><button type='button' data-nm='-1'"+(NM<=1||acc[NM]?" disabled":"")+">➖</button><button type='button' data-nm='1'"+(NM>=60?" disabled":"")+">➕</button></div>"+(acc[NM]?"<p class='legend'>Para remover, a mesa "+NM+" precisa estar livre.</p>":""):"")+(window.cur&&cur.r!="func"?"<p class='legend'>Vendido hoje: <b style='color:var(--ink)'>"+brl(td)+"</b></p>":"");
 }
 function go(v){view=v;$("menu").style.display=v=="ped"?"block":"none";$("mesas").style.display=v=="mesas"?"block":"none";$("tabs").style.display=v=="ped"?"flex":"none";$("vPed").className=v=="ped"?"on":"";$("vMesas").className=v=="mesas"?"on":"";if(v=="mesas")renderMesas();render();window.scrollTo(0,0)}
 $("vPed").onclick=function(){go("ped")};$("vMesas").onclick=function(){go("mesas")};
-$("mesas").addEventListener("click",function(e){var b=e.target.closest("button");if(b)openTable(Number(b.dataset.m))});
+$("mesas").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;if(b.dataset.nm){var d=Number(b.dataset.nm);if(d<0&&acc[NM])return;NM=Math.max(1,Math.min(60,NM+d));if(sel>NM)sel=1;saveNM();renderMesas();drawPick();return}openTable(Number(b.dataset.m))});
 function sheet(h){$("psheet").innerHTML=h;$("pveil").style.display="block"}
 function openTable(n){
   var b=acc[n],h="<h3>Mesa "+n+"</h3>";
@@ -549,6 +554,66 @@ function exportApp(){
 }
 </script>
 <style>
+.adb{margin-top:8px;font-size:13px;font-weight:700;padding:8px 12px;border-radius:12px;border:1px dashed var(--brand);background:none;color:var(--brand)}
+.adb.has{border-style:solid;background:var(--brand);color:var(--brand-ink)}
+.adw{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;padding:10px;border-radius:12px;background:var(--bg)}
+.adw p{width:100%;margin:0 0 2px;font-size:12px;color:var(--mut)}
+.adw button{font-size:13px;padding:8px 12px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-weight:600}
+.adw button.on{background:var(--ok);border-color:var(--ok);color:#fff}
+.adt{display:block;color:var(--ok);font-weight:700;font-size:12.5px}
+</style>
+<script>
+// ===== ADICIONAIS (R$ 4 cada, por unidade). Edite a lista e o preço aqui. =====
+// Temperos que já vêm de graça (milho, tomate, orégano...) NÃO entram aqui.
+var AD_PRECO=4;
+var AD_SALG=["Carne","Frango","Queijo","Pizza","Palmito","Catupiry","Cheddar","Ovo","Carne seca","Banana"];
+var AD_DOCE=["Chocolate","Chocolate branco","Beijinho","Goiabada","Nutella"];
+var AD_ALL=AD_SALG.concat(AD_DOCE.filter(function(n){return AD_SALG.indexOf(n)<0}));
+MENU.push({cat:"Adicionais",hide:true,ad:true,itens:AD_ALL.map(function(n){return["Adicional: "+n,"",AD_PRECO,"➕","#cccccc"]})});
+var ADG=MENU.length-1,adSel={},adOpen={};
+function adKey(n){return ADG+"-"+AD_ALL.indexOf(n)}
+function adList(k){var g=MENU[k.split("-")[0]];if(!g||g.ad||/suco|caldo|bebida/i.test(g.cat))return null;return /doce/i.test(g.cat)?AD_DOCE:AD_SALG}
+function adSync(){
+  AD_ALL.forEach(function(n){delete qty[adKey(n)]});
+  Object.keys(adSel).forEach(function(k){var q=qty[k]||0;if(!q||!adSel[k].length){delete adSel[k];return}
+    adSel[k].forEach(function(n){var ak=adKey(n);qty[ak]=(qty[ak]||0)+q})});
+}
+var _adTotals=totals;
+totals=function(){var x=_adTotals(),n=x[0];AD_ALL.forEach(function(a){n-=qty[adKey(a)]||0});return[n,x[1]]};
+var _adRender=render;
+render=function(){
+  adSync();_adRender();
+  var l="";
+  MENU.forEach(function(g,gi){if(g.ad)return;g.itens.forEach(function(it,ii){var k=gi+"-"+ii,q=qty[k]||0;if(!q)return;
+    var s=adSel[k]||[],L=adList(k),un=it[2]+s.length*AD_PRECO;
+    l+="<div class='line'><div class='n'>"+it[0]+(s.length?"<span class='adt'>+ "+s.join(", ")+"</span>":"")+"<small>"+brl(un*q)+"</small></div>"+stepper(k,q)+"</div><div class='ob'>";
+    if(L){
+      l+="<button type='button' class='adb"+(s.length?" has":"")+"' data-adt='"+k+"'>"+(s.length?"➕ Adicionais ("+s.length+")  +"+brl(s.length*AD_PRECO*q):"➕ Adicionais  ·  R$ "+AD_PRECO+" cada")+"</button>";
+      if(adOpen[k])l+="<div class='adw'><p>Toque para adicionar ou tirar"+(q>1?" (vale para os "+q+")":"")+"</p>"+L.map(function(n){return "<button type='button' data-adk='"+k+"' data-adn='"+n+"' class='"+(s.indexOf(n)>=0?"on":"")+"'>"+(s.indexOf(n)>=0?"✓ ":"+ ")+n+"</button>"}).join("")+"</div>";
+    }
+    l+="<input type='text' data-o='"+k+"' placeholder='Observação (ex.: sem tomate, sem milho)' value=\""+(obs[k]||"").replace(/"/g,"&quot;")+"\" style='margin-top:8px'><div class='oc'>"+["sem tomate","sem milho","sem cebola","sem ovo"].map(function(x){return "<button type='button' data-ok='"+k+"' data-ov='"+x+"'>"+x+"</button>"}).join("")+"</div></div>";
+  })});
+  $("lines").innerHTML=l;
+};
+$("lines").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;
+  if(b.dataset.adt){var k=b.dataset.adt;adOpen[k]=!adOpen[k];render()}
+  else if(b.dataset.adk){var k=b.dataset.adk,n=b.dataset.adn,s=adSel[k]||(adSel[k]=[]),i=s.indexOf(n);if(i>=0)s.splice(i,1);else s.push(n);render()}
+});
+var _adSend=$("send").onclick;
+$("send").onclick=function(){
+  adSync();var bk={};Object.keys(obs).forEach(function(k){bk[k]=obs[k]});
+  Object.keys(adSel).forEach(function(k){var t="+ "+adSel[k].join(" + ");obs[k]=obs[k]?t+" | "+obs[k]:t});
+  _adSend.apply(this,arguments);
+  if($("ticket").style.display=="block"){$("paper").innerHTML=$("paper").innerHTML.replace(/\d+x Adicional: [^\n<]*\n/g,"")}
+  else obs=bk;
+};
+var _adClear=$("clear").onclick;$("clear").onclick=function(){adSel={};adOpen={};_adClear.apply(this,arguments)};
+var _adFinish=finish;finish=function(){adSel={};adOpen={};_adFinish.apply(this,arguments)};
+$("done").onclick=finish;
+render();
+</script>
+
+<style>
 /* abas de cima numa linha só (não quebra em telas pequenas / letra grande) */
 .views{display:flex!important;gap:6px;overflow-x:auto;scrollbar-width:none;padding:10px 12px!important}
 .views::-webkit-scrollbar{display:none}
@@ -674,3 +739,5 @@ $("psheet").addEventListener("click",async function(e){var b=e.target.closest("b
 </script>
 </body>
 </html>
+
+</body></html>
