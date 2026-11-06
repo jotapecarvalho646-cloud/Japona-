@@ -311,7 +311,7 @@ function renderCx(){
   mv.forEach(function(m){h+="<div class='line'><div class='n'>"+m.n+"<small>"+hm(m.t)+"</small></div><b style='color:"+(m.v<0?"var(--brand)":"var(--ok)")+"'>"+(m.v<0?"− ":"+ ")+brl(Math.abs(m.v))+"</b>"+(m.v<0?"<button class='x' data-del='"+m.id+"' type='button'>✕</button>":"")+"</div>"});
   h+="</div><div class='ch'>Últimos dias</div><div class='pan'>";
   for(var i=0;i<7;i++){var d=new Date();d.setDate(d.getDate()-i);var q=dayData(d);h+="<div class='line hist' data-t='"+d.getTime()+"'><div class='n'>"+dl(d)+"<small>"+q.e.length+" vendas</small></div><b>"+brl(q.te)+"</b></div>"}
-  $("caixa").innerHTML=h+"</div><button class='big' id='team' type='button' style='background:var(--ink);color:var(--bg);margin-top:18px'>👥 Equipe e logins</button>";
+  $("caixa").innerHTML=h+"</div><button class='big' id='team' type='button' style='background:var(--ink);color:var(--bg);margin-top:18px'>👥 Equipe e logins</button>"+(window.cur&&cur.r=="dono"?"<button class='ghost' id='zerar' type='button' style='margin-top:22px;color:var(--brand)'>🧹 Zerar dados de teste</button>":"")+"";
 }
 $("caixa").addEventListener("click",function(e){
   var b=e.target.closest("button"),r=e.target.closest(".hist");
@@ -656,6 +656,21 @@ input,textarea,select{font-size:16px!important}
 function filaImpressao(who,hh,jP,jS){if(!window.FB||!FB.db)return;var t=Date.now(),u=(window.cur&&cur.n)||"";
   [["pastel",jP],["suco",jS]].forEach(function(x){if(!x[1].length)return;var id=t+"-"+x[0];
     FB.db.collection("impressoes").doc(id).set({id:id,t:t,dest:x[0],quem:who,hora:hh,atendente:u,itens:x[1].map(function(i){return{q:i[0],n:i[1],obs:i[2]}}),status:"novo"}).catch(function(e){console.log(e)})})}
+</script>
+<script>
+// ===== ZERAR DADOS DE TESTE (só dono) — perfis ficam =====
+var ZCOLS=["vendas","caixas","saidas","impressoes","mesas","levar"];
+$("caixa").addEventListener("click",function(e){var b=e.target.closest("button");if(!b||b.id!="zerar")return;
+  sheet("<h3>🧹 Zerar dados de teste</h3><p>Vai apagar <b>todas</b> as vendas e o histórico do caixa, e fechar as mesas e pedidos para levar abertos. Os <b>perfis</b> continuam.</p><p><b>Não tem como desfazer.</b> Para confirmar, digite <b>ZERAR</b>:</p><input id='zok' type='text' autocomplete='off' autocapitalize='characters' placeholder='ZERAR'><button class='big' data-a='zgo' type='button' style='background:var(--brand)'>Apagar tudo e começar do zero</button><button class='ghost' data-a='x' type='button'>Cancelar</button>")});
+$("psheet").addEventListener("click",async function(e){var b=e.target.closest("button");if(!b||b.dataset.a!="zgo")return;
+  if(($("zok").value||"").trim().toUpperCase()!="ZERAR"){$("zok").focus();return}
+  if(!window.FB||!FB.db){sheet("<h3>Sem conexão com a loja</h3><p>Abra o app com internet e tente de novo.</p><button class='big' data-a='x' type='button'>OK</button>");return}
+  b.disabled=true;b.textContent="Apagando…";var n=0;
+  try{for(var i=0;i<ZCOLS.length;i++){var snap=await FB.db.collection(ZCOLS[i]).get();var ds=[];snap.forEach(function(d){ds.push(d)});
+      for(var j=0;j<ds.length;j++){await FB.db.collection(ZCOLS[i]).doc(ds[j].id).delete();n++}}
+    acc={};lv=[];sales=[];sai=[];cacheAll();refreshAll();
+    sheet("<h3>✅ Pronto!</h3><p>"+n+" registros de teste apagados. O app está zerado, como no primeiro dia de vendas.</p><button class='big' data-a='x' type='button'>OK</button>")}
+  catch(er){sheet("<h3>Não terminou</h3><p>"+esc(fbErr(er))+"</p><p>Apagados até agora: "+n+". Tente de novo.</p><button class='big' data-a='x' type='button'>OK</button>")}});
 </script>
 </body>
 </html>
