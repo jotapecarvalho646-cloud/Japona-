@@ -98,7 +98,7 @@ input[type=text]{width:100%;padding:14px;border-radius:12px;border:2px solid var
 
 <script>
 // CARDÁPIO DE EXEMPLO: edite nomes, descrições e preços aqui. [nome, descrição, preço, emoji, cor]
-var MENU=[{cat:"⭐ Sugestões da casa",hide:true,itens:[["Pastel Tudão", "Carne, queijo, pizza e frango. Opção de Catupiry ou cheddar", 23, "🥟", "#e9a35f"], ["Pastel X-Tudão", "Carne, queijo, pizza, frango, ovo, palmito e carne seca", 25, "🥟", "#e58f4f"]]},{cat:"Pastéis tradicionais",itens:[["Carne", "Pastel tradicional", 12, "🥟", "#f4a261"], ["Frango", "Pastel tradicional", 12, "🥟", "#f4a261"], ["Queijo", "Pastel tradicional", 12, "🥟", "#f4a261"], ["Queijo com orégano", "Pastel tradicional", 12, "🥟", "#f4a261"], ["Pizza", "Pastel tradicional", 12, "🥟", "#f4a261"], ["Pastel de Vento", "Crocante, sem recheio", 6, "🥟", "#f6c453"]]},{cat:"Pastéis especiais",itens:[["Palmito", "", 15, "🌿", "#8fc77a"], ["Palmito c/ pizza", "", 17, "🌿", "#8fc77a"], ["Palmito c/ queijo", "", 17, "🌿", "#8fc77a"], ["Palmito c/ carne", "", 17, "🌿", "#8fc77a"], ["Palmito c/ frango", "", 17, "🌿", "#8fc77a"], ["Palmito c/ Catupiry ou cheddar", "", 17, "🌿", "#8fc77a"], ["Palmito c/ ovo", "", 17, "🌿", "#8fc77a"], ["Carne c/ ovo", "", 16, "🥚", "#f2cf66"], ["Queijo c/ ovo", "", 16, "🥚", "#f2cf66"], ["Frango c/ ovo", "", 16, "🥚", "#f2cf66"], ["Pizza c/ ovo", "", 16, "🥚", "#f2cf66"], ["Carne seca", "", 17, "🥩", "#d9825b"], ["Carne seca c/ queijo", "", 18, "🥩", "#d9825b"], ["Carne seca c/ banana", "", 18, "🍌", "#d9825b"]]},{cat:"Pastéis mistos",itens:[["Carne c/ queijo", "", 16, "🥟", "#e9a35f"], ["Frango c/ Catupiry ou cheddar", "", 16, "🥟", "#e9a35f"], ["Carne c/ frango", "", 16, "🥟", "#e9a35f"], ["Carne c/ Catupiry ou cheddar", "", 16, "🥟", "#e9a35f"], ["Frango c/ queijo", "", 16, "🥟", "#e9a35f"], ["Frango c/ pizza", "", 16, "🥟", "#e9a35f"], ["Pizza c/ Catupiry ou cheddar", "", 16, "🥟", "#e9a35f"], ["Queijo c/ Catupiry ou cheddar", "", 16, "🥟", "#e9a35f"], ["Carne c/ pizza", "", 16, "🥟", "#e9a35f"]]},{cat:"Pastéis doces",itens:[["Chocolate", "", 10, "🍫", "#a8704f"], ["Chocolate Branco", "", 10, "🍫", "#a8704f"], ["Beijinho", "", 10, "🍫", "#a8704f"], ["Romeu e Julieta", "", 10, "🍫", "#a8704f"], ["Nutella", "Nutella é vida!", 15, "🍫", "#8a5a3c"]]},{cat:"Suco de laranja",itens:[["Suco de laranja – Copo 400ml", "Natural e refrescante", 8, "🍊", "#f5a65b"], ["Suco de laranja – Copo 700ml", "Natural e refrescante", 14, "🍊", "#f5a65b"], ["Suco de laranja – Jarra 1L", "Natural e refrescante", 20, "🍊", "#f5a65b"], ["Suco de laranja – Garrafa p/ viagem 500ml", "Natural e refrescante", 10, "🍊", "#f5a65b"], ["Suco de laranja – Garrafa p/ viagem 1L", "Natural e refrescante", 20, "🍊", "#f5a65b"]]},{cat:"Caldo de cana",itens:[["Caldo de cana – Copo 400ml", "Gelado, na hora", 8, "🥤", "#9bd38a"], ["Caldo de cana – Copo 700ml", "Gelado, na hora", 14, "🥤", "#9bd38a"], ["Caldo de cana – Jarra 1L", "Gelado, na hora", 20, "🥤", "#9bd38a"], ["Caldo de cana – Garrafa p/ viagem 500ml", "Gelado, na hora", 10, "🥤", "#9bd38a"], ["Caldo de cana – Garrafa p/ viagem 1L", "Gelado, na hora", 20, "🥤", "#9bd38a"]]},{cat:"Outras bebidas",itens:[["Limão", "", 8, "🍋", "#c9e07a", 1], ["Guaraná ralado", "", 8, "🥤", "#b58bd8", 1], ["Água s/ gás", "", 4, "💧", "#8fd0ee"], ["Água c/ gás", "", 4, "💧", "#8fd0ee"]]}];
+var MENU=[{cat:"Pastel Tudão",split:true,depois:"mistos",itens:[["Pastel Tudão", "Carne, queijo, pizza e frango c/ Catupiry ou cheddar", 23, "🥟", "#e9a35f"], ["Pastel X-Tudão", "Carne, queijo, pizza, frango c/ Catupiry ou cheddar, ovo, palmito e carne seca", 25, "🥟", "#e58f4f"]]},{cat:"Pastéis tradicionais",itens:[["Carne", "Pastel tradicional", 12, "🥟", "#f4a261"], ["Frango", "Pastel tradicional", 12, "🥟", "#f4a261"], ["Queijo", "Pastel tradicional", 12, "🥟", "#f4a261"], ["Queijo com orégano", "Pastel tradicional", 12, "🥟", "#f4a261"], ["Pizza", "Pastel tradicional", 12, "🥟", "#f4a261"], ["Pastel de Vento", "Crocante, sem recheio", 6, "🥟", "#f6c453"]]},{cat:"Pastéis especiais",itens:[["Palmito", "", 15, "🌿", "#8fc77a"], ["Palmito c/ pizza", "", 17, "🌿", "#8fc77a"], ["Palmito c/ queijo", "", 17, "🌿", "#8fc77a"], ["Palmito c/ carne", "", 17, "🌿", "#8fc77a"], ["Palmito c/ frango", "", 17, "🌿", "#8fc77a"], ["Palmito c/ Catupiry ou cheddar", "", 17, "🌿", "#8fc77a"], ["Palmito c/ ovo", "", 17, "🌿", "#8fc77a"], ["Carne c/ ovo", "", 16, "🥚", "#f2cf66"], ["Queijo c/ ovo", "", 16, "🥚", "#f2cf66"], ["Frango c/ ovo", "", 16, "🥚", "#f2cf66"], ["Pizza c/ ovo", "", 16, "🥚", "#f2cf66"], ["Carne seca", "", 17, "🥩", "#d9825b"], ["Carne seca c/ queijo", "", 18, "🥩", "#d9825b"], ["Carne seca c/ banana", "", 18, "🍌", "#d9825b"]]},{cat:"Pastéis mistos",itens:[["Carne c/ queijo", "", 16, "🥟", "#e9a35f"], ["Frango c/ Catupiry ou cheddar", "", 16, "🥟", "#e9a35f"], ["Carne c/ frango", "", 16, "🥟", "#e9a35f"], ["Carne c/ Catupiry ou cheddar", "", 16, "🥟", "#e9a35f"], ["Frango c/ queijo", "", 16, "🥟", "#e9a35f"], ["Frango c/ pizza", "", 16, "🥟", "#e9a35f"], ["Pizza c/ Catupiry ou cheddar", "", 16, "🥟", "#e9a35f"], ["Queijo c/ Catupiry ou cheddar", "", 16, "🥟", "#e9a35f"], ["Carne c/ pizza", "", 16, "🥟", "#e9a35f"]]},{cat:"Pastéis doces",itens:[["Chocolate", "", 10, "🍫", "#a8704f"], ["Chocolate Branco", "", 10, "🍫", "#a8704f"], ["Beijinho", "", 10, "🍫", "#a8704f"], ["Romeu e Julieta", "", 10, "🍫", "#a8704f"], ["Nutella", "Nutella é vida!", 15, "🍫", "#8a5a3c"]]},{cat:"Suco de laranja",itens:[["Suco de laranja – Copo 400ml", "Natural e refrescante", 8, "🍊", "#f5a65b"], ["Suco de laranja – Copo 700ml", "Natural e refrescante", 14, "🍊", "#f5a65b"], ["Suco de laranja – Jarra 1L", "Natural e refrescante", 20, "🍊", "#f5a65b"], ["Suco de laranja – Garrafa p/ viagem 500ml", "Natural e refrescante", 10, "🍊", "#f5a65b"], ["Suco de laranja – Garrafa p/ viagem 1L", "Natural e refrescante", 20, "🍊", "#f5a65b"]]},{cat:"Caldo de cana",itens:[["Caldo de cana – Copo 400ml", "Gelado, na hora", 8, "🥤", "#9bd38a"], ["Caldo de cana – Copo 700ml", "Gelado, na hora", 14, "🥤", "#9bd38a"], ["Caldo de cana – Jarra 1L", "Gelado, na hora", 20, "🥤", "#9bd38a"], ["Caldo de cana – Garrafa p/ viagem 500ml", "Gelado, na hora", 10, "🥤", "#9bd38a"], ["Caldo de cana – Garrafa p/ viagem 1L", "Gelado, na hora", 20, "🥤", "#9bd38a"]]},{cat:"Outras bebidas",itens:[["Limão", "", 8, "🍋", "#c9e07a", 1], ["Guaraná ralado", "", 8, "🥤", "#b58bd8", 1], ["Água s/ gás", "", 4, "💧", "#8fd0ee"], ["Água c/ gás", "", 4, "💧", "#8fd0ee"]]}];
 var qty={},obs={},mode="mesa";
 var $=function(i){return document.getElementById(i)};
 var brl=function(v){return "R$ "+v.toFixed(2).replace(".",",")};
@@ -112,11 +112,17 @@ function stepper(k,q){return "<div class='add'>"+(q?"<button data-k='"+k+"' data
 function totals(){var n=0,t=0;MENU.forEach(function(g,gi){g.itens.forEach(function(it,ii){var q=qty[gi+"-"+ii]||0;n+=q;t+=q*it[2]})});return[n,t]}
 function render(){
   var h="",tb="";
-  MENU.forEach(function(g,gi){
-    if(g.hide)return; // seção escondida (hide:true)
-    tb+="<button data-go='s"+gi+"' type='button'"+(!tb?" class='on'":"")+">"+g.cat+"</button>";
-    h+="<h2 id='s"+gi+"'>"+g.cat+"</h2><div class='grid'>";
+  // ordem das seções na tela (Tudão e X-Tudão logo depois dos mistos, cada um na sua fila)
+  var ord=[],sec=[];MENU.forEach(function(g,gi){if(!g.depois)ord.push(gi)});
+  MENU.forEach(function(g,gi){if(g.depois){var p=-1;ord.forEach(function(x,i){if(new RegExp(g.depois,"i").test(MENU[x].cat))p=i});ord.splice(p+1,0,gi)}});
+  ord.forEach(function(gi){var g=MENU[gi];if(g.hide)return; // seção escondida (hide:true)
+    if(g.split)g.itens.forEach(function(it,ii){sec.push([gi,"s"+gi+"_"+ii,it[0],[ii]])});
+    else sec.push([gi,"s"+gi,g.cat,null])});
+  sec.forEach(function(sc){var gi=sc[0],g=MENU[gi];
+    tb+="<button data-go='"+sc[1]+"' type='button'"+(!tb?" class='on'":"")+">"+sc[2]+"</button>";
+    h+="<h2 id='"+sc[1]+"'>"+sc[2]+"</h2><div class='grid'>";
     g.itens.forEach(function(it,ii){
+      if(sc[3]&&sc[3].indexOf(ii)<0)return;
       if(it[5])return; // item escondido (vira adicional)
       var k=gi+"-"+ii,q=qty[k]||0;
       h+="<div class='card'><div class='info'><b>"+it[0]+"</b><span>"+it[1]+"</span><em>"+brl(it[2])+"</em></div>"+
@@ -740,4 +746,147 @@ $("psheet").addEventListener("click",async function(e){var b=e.target.closest("b
 </body>
 </html>
 
+<style>
+.ed{border-bottom:1px solid var(--line);padding:10px 0}
+.edr{display:flex;align-items:center;gap:8px}
+.edr .n{flex:1;font-weight:700}.edr .n small{display:block;font-weight:600;color:var(--mut)}
+.edr button{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:18px;flex:none}
+.edr button.del{border-color:#f1b5ae;color:var(--brand)}
+.edr b.q{min-width:22px;text-align:center;font-size:17px}
+.ed input{width:100%;margin-top:6px;padding:9px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.ed.off{opacity:.45}.ed.off .n{text-decoration:line-through}
+.hint{background:var(--bg);border-radius:12px;padding:10px 12px;font-size:14px;color:var(--mut);margin:10px 0}
+.addto{background:#fff3cd;color:#7a5200;border-radius:12px;padding:10px 12px;font-weight:700;margin-bottom:10px}
+</style>
+<script>
+// ===== EDITAR / EXCLUIR ITENS, TROCAR MESA, ADICIONAR MAIS NO LEVAR =====
+var ed=null,addTo=null;
+function isBeb(k){var g=MENU[String(k).split("-")[0]];return !!(g&&/suco|caldo|bebida/i.test(g.cat))}
+function cp(o){return JSON.parse(JSON.stringify(o||{}))}
+function nowHM(){var d=new Date();return("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2)}
+
+// Tela da mesa: agora com Editar e Trocar mesa
+openTable=function(n){
+  var b=acc[n],h="<h3>Mesa "+n+"</h3>";
+  if(!b){sheet(h+"<p style='color:var(--mut)'>Mesa livre.</p><button class='big' data-a='add' data-m='"+n+"' type='button' style='background:var(--brand)'>➕ Fazer pedido</button><button class='ghost' data-a='x' type='button'>Fechar</button>");return}
+  lines(b.items).forEach(function(l){h+="<div class='line'><div class='n'>"+l[1]+"x "+l[0]+((b.obs||{})[l[3]]?"<small>📝 "+esc(b.obs[l[3]])+"</small>":"")+"</div><b>"+brl(l[1]*l[2])+"</b></div>"});
+  h+="<div class='sum'><span>Total</span><span>"+brl(tTot(b.items))+"</span></div>"+
+    "<div class='row2'><button data-a='add' data-m='"+n+"' type='button' style='background:var(--line);color:var(--ink)'>➕ Adicionar</button><button data-a='pay' data-m='"+n+"' type='button' style='background:var(--ok);color:#fff'>💰 Fechar conta</button></div>"+
+    "<div class='row2' style='margin-top:8px'><button data-a='ed' data-m='"+n+"' type='button' style='background:var(--line);color:var(--ink)'>✏️ Editar itens</button><button data-a='tr' data-m='"+n+"' type='button' style='background:var(--line);color:var(--ink)'>🔁 Trocar mesa</button></div>";
+  sheet(h+"<button class='ghost' data-a='x' type='button'>Fechar</button>");
+};
+
+// Editor de itens (mesa ou levar)
+function openEd(kind,id){
+  var src=kind=="mesa"?acc[id]:getLv(id);if(!src)return;
+  var it=kind=="mesa"?src.items:src.o;
+  ed={kind:kind,id:id,items:cp(it),obs:cp(src.obs),orig:cp(it),oobs:cp(src.obs)};drawEd();
+}
+function edTitle(){return ed.kind=="mesa"?"Mesa "+ed.id:"Levar: "+esc((getLv(ed.id)||{}).n||"")}
+function drawEd(){
+  var h="<h3>✏️ Editar · "+edTitle()+"</h3>",ks=Object.keys(ed.orig);
+  Object.keys(ed.items).forEach(function(k){if(ks.indexOf(k)<0)ks.push(k)});
+  ks.forEach(function(k){var p=k.split("-"),it=(MENU[p[0]]||{itens:[]}).itens[p[1]];if(!it)return;var q=ed.items[k]||0,ad=MENU[p[0]].ad;
+    h+="<div class='ed"+(q?"":" off")+"'><div class='edr'><div class='n'>"+it[0]+"<small>"+(q?brl(q*it[2]):"vai ser excluído")+"</small></div>"+
+      (q?"<button type='button' data-a='eq' data-k='"+k+"' data-d='-1'>−</button><b class='q'>"+q+"</b><button type='button' data-a='eq' data-k='"+k+"' data-d='1'>+</button><button type='button' class='del' data-a='edel' data-k='"+k+"' aria-label='Excluir'>🗑️</button>"
+        :"<button type='button' data-a='eq' data-k='"+k+"' data-d='"+(ed.orig[k]||1)+"' style='width:auto;border-radius:12px;padding:0 12px;font-size:14px'>↩ Voltar</button>")+
+      "</div>"+(q&&!ad?"<input type='text' data-eo='"+k+"' placeholder='Observação' value=\""+esc(ed.obs[k]||"").replace(/"/g,"&quot;")+"\">":"")+"</div>"});
+  var t=tTot(ed.items),vazio=!Object.keys(ed.items).some(function(k){return ed.items[k]>0});
+  h+="<div class='sum'><span>Novo total</span><span>"+brl(t)+"</span></div>";
+  if(Object.keys(ed.items).some(function(k){return MENU[k.split("-")[0]]&&MENU[k.split("-")[0]].ad}))h+="<div class='hint'>💡 Os adicionais aparecem em linhas separadas. Se tirar um pastel que tinha adicional, tire o adicional também.</div>";
+  if(vazio)h+="<div class='hint' style='color:var(--brand);font-weight:700'>"+(ed.kind=="mesa"?"Todos os itens foram excluídos: a mesa vai ficar livre.":"Todos os itens foram excluídos: o pedido vai ser cancelado.")+"</div>";
+  h+="<button class='big' data-a='esave' type='button'"+(vazio?" style='background:var(--brand)'":"")+">"+(vazio?"🗑️ Confirmar exclusão":"💾 Salvar alterações")+"</button>"+
+    "<button class='ghost' data-a='"+(ed.kind=="mesa"?"eback":"x")+"' type='button'>Cancelar</button>";
+  sheet(h);
+}
+function edSave(){
+  var e=ed,src=e.kind=="mesa"?acc[e.id]:getLv(e.id);if(!src){ed=null;$("pveil").style.display="none";return}
+  var it=e.kind=="mesa"?src.items:src.o;src.obs=src.obs||{};
+  var cP=[],cS=[],aP=[],aS=[],all={};
+  Object.keys(e.orig).concat(Object.keys(e.items)).forEach(function(k){all[k]=1});
+  Object.keys(all).forEach(function(k){
+    var p=k.split("-"),m=(MENU[p[0]]||{itens:[]}).itens[p[1]];if(!m)return;
+    var d=(e.items[k]||0)-(e.orig[k]||0),nq=Math.max(0,(it[k]||0)+d),nob=(e.obs[k]||"").trim(),obc=nob!=((e.oobs[k]||"").trim());
+    // aplica só a diferença (se outro celular mexeu ao mesmo tempo, não perde)
+    if(nq)it[k]=nq;else delete it[k];
+    if(!nq)delete src.obs[k];else if(obc){if(nob)src.obs[k]=nob;else delete src.obs[k]}
+    var beb=isBeb(k);
+    if(d<0)(beb?cS:cP).push([-d,"CANCELAR "+m[0],""]);
+    else if(d>0)(beb?aS:aP).push([d,m[0],nob]);
+    if(obc&&nq&&d<=0)(beb?aS:aP).push([nq,"MUDOU OBS: "+m[0],nob||"sem observação"]);
+  });
+  var vazio=!Object.keys(it).length,quem=e.kind=="mesa"?"MESA "+e.id:"LEVAR: "+String(src.n||"").toUpperCase();
+  if(cP.length||cS.length||aP.length||aS.length)filaImpressao(quem+" · ALTERAÇÃO",nowHM(),cP.concat(aP),cS.concat(aS));
+  if(e.kind=="mesa"){if(vazio)delete acc[e.id];save();renderMesas();drawPick()}
+  else{if(vazio)lv=lv.filter(function(x){return x.id!=e.id});saveLv();lvBadge();renderLv()}
+  ed=null;
+  sheet("<h3>✅ Alterações salvas</h3><p>"+(vazio?(e.kind=="mesa"?"Mesa "+e.id+" liberada.":"Pedido cancelado."):"Novo total: <b>"+brl(tTot(it))+"</b>")+"</p>"+((cP.length||cS.length||aP.length||aS.length)?"<p style='color:var(--mut)'>🖨️ A cozinha recebeu um aviso da alteração.</p>":"")+"<button class='big' data-a='x' type='button'>Pronto</button>");
+}
+
+// Trocar mesa
+function drawTr(n){
+  var h="<h3>🔁 Trocar mesa "+n+"</h3><p style='color:var(--mut)'>Para qual mesa o cliente foi?</p><div class='mpick' style='display:grid'>";
+  for(var i=1;i<=NM;i++){if(i==n)continue;h+="<button type='button' data-a='trgo' data-m='"+n+"' data-to='"+i+"' class='"+(acc[i]?"busy":"free")+"'>"+i+"</button>"}
+  h+="</div><p class='legend'><span>🟢 Livre: só muda</span><span>🔴 Ocupada: junta as contas</span></p><button class='ghost' data-a='eback' data-m='"+n+"' type='button'>Cancelar</button>";
+  sheet(h);
+}
+function trGo(from,to,ok){
+  var a=acc[from];if(!a){$("pveil").style.display="none";return}
+  if(acc[to]&&!ok){sheet("<h3>Juntar as contas?</h3><p>A mesa <b>"+to+"</b> já está ocupada ("+brl(tTot(acc[to].items))+"). Os itens da mesa <b>"+from+"</b> vão passar para a mesa <b>"+to+"</b> e virar uma conta só.</p><button class='big' data-a='trok' data-m='"+from+"' data-to='"+to+"' type='button'>✅ Juntar na mesa "+to+"</button><button class='ghost' data-a='tr' data-m='"+from+"' type='button'>Voltar</button>");return}
+  if(acc[to]){var b=acc[to];b.obs=b.obs||{};Object.keys(a.items).forEach(function(k){b.items[k]=(b.items[k]||0)+a.items[k]});
+    Object.keys(a.obs||{}).forEach(function(k){b.obs[k]=b.obs[k]?b.obs[k]+"; "+a.obs[k]:a.obs[k]});b.t=Math.min(b.t||Date.now(),a.t||Date.now())}
+  else{acc[to]=a;a.n=to}
+  delete acc[from];save();renderMesas();drawPick();
+  // avisa a cozinha para entregar na mesa certa
+  var jP=[],jS=[];Object.keys(a.items).forEach(function(k){var p=k.split("-"),m=MENU[p[0]].itens[p[1]];if(MENU[p[0]].ad)return;(isBeb(k)?jS:jP).push([a.items[k],m[0],""])});
+  filaImpressao("MESA "+from+" -> MESA "+to,nowHM(),jP,jS);
+  sheet("<h3>✅ Mesa trocada</h3><p>Tudo da mesa <b>"+from+"</b> agora está na mesa <b>"+to+"</b>.</p><button class='big' data-a='x' type='button'>Pronto</button>");
+}
+
+$("psheet").addEventListener("click",function(e){
+  var b=e.target.closest("button");if(!b)return;var a=b.dataset.a,m=Number(b.dataset.m);
+  if(a=="ed")openEd("mesa",m);
+  else if(a=="eq"){var k=b.dataset.k;ed.items[k]=Math.max(0,(ed.items[k]||0)+Number(b.dataset.d));drawEd()}
+  else if(a=="edel"){ed.items[b.dataset.k]=0;drawEd()}
+  else if(a=="esave")edSave();
+  else if(a=="eback"){var n=m||(ed&&ed.id);ed=null;openTable(n)}
+  else if(a=="tr")drawTr(m);
+  else if(a=="trgo")trGo(m,Number(b.dataset.to),false);
+  else if(a=="trok")trGo(m,Number(b.dataset.to),true);
+  else if(a=="x")ed=null;
+});
+$("psheet").addEventListener("input",function(e){var k=e.target.dataset.eo;if(k&&ed)ed.obs[k]=e.target.value});
+
+// ===== LEVAR: botões Editar e Adicionar mais (só enquanto A PAGAR) =====
+var _renderLv=renderLv;
+renderLv=function(){_renderLv();
+  $("levar").querySelectorAll(".lvc").forEach(function(c){var bt=c.querySelector("[data-le]");if(!bt)return;var x=getLv(bt.dataset.le);if(!x)return;
+    var r=document.createElement("div");r.className="row2";r.style.marginTop="8px";
+    r.innerHTML=x.pd?"<p class='legend' style='margin:4px 2px 0'>Já pago. Para mais itens, faça um pedido novo.</p>":"<button data-lx='"+x.id+"' type='button' style='background:var(--line);color:var(--ink)'>✏️ Editar</button><button data-la='"+x.id+"' type='button' style='background:var(--line);color:var(--ink)'>➕ Adicionar mais</button>";
+    c.appendChild(r)})};
+$("levar").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;
+  if(b.dataset.lx)openEd("lv",b.dataset.lx);
+  else if(b.dataset.la){var x=getLv(b.dataset.la);if(!x||x.pd)return;addTo={lv:x.id,n:x.n};qty={};obs={};adSel={};adOpen={};setMode("levar");$("who").value=x.n=="(sem nome)"?"":x.n;go("ped");showAddTo()}
+});
+var ab=document.createElement("div");ab.className="addto";ab.id="addto";ab.style.display="none";var _h3=$("veil").querySelector("h3");_h3.parentNode.insertBefore(ab,_h3.nextSibling);
+function showAddTo(){var on=addTo&&mode=="levar";ab.style.display=on?"block":"none";if(on)ab.innerHTML="➕ Adicionando ao pedido de <b>"+esc(addTo.n)+"</b> <button type='button' id='addx' style='float:right;border:0;background:none;color:inherit;font-weight:800'>✕</button>";
+  $("cart").querySelector("span").lastChild.textContent=on?"Adicionar ao pedido":"Ver pedido"}
+ab.addEventListener("click",function(e){if(e.target.id=="addx"){addTo=null;showAddTo()}});
+var _sm=setMode;setMode=function(m){_sm(m);showAddTo()};
+var _send2=$("send").onclick;
+$("send").onclick=function(){_send2.apply(this,arguments);
+  if(!pendingSend||!addTo||mode!="levar")return;
+  var f=pendingSend,tg=addTo.lv;
+  pendingSend=function(){var n0=lv.length;f();var x=getLv(tg);
+    if(x&&!x.pd&&lv.length>n0){var nw=lv.pop();x.obs=x.obs||{};
+      Object.keys(nw.o).forEach(function(k){x.o[k]=(x.o[k]||0)+nw.o[k]});
+      Object.keys(nw.obs||{}).forEach(function(k){x.obs[k]=x.obs[k]?x.obs[k]+"; "+nw.obs[k]:nw.obs[k]});
+      saveLv();lvBadge();last.lv=x.id;last.o=cp(x.o);last.obs=cp(x.obs);
+      $("tkst").innerHTML="✅ Itens adicionados ao pedido de "+esc(x.n)}
+    addTo=null;showAddTo()};
+};
+var _fin2=finish;finish=function(){addTo=null;showAddTo();_fin2.apply(this,arguments)};
+$("done").onclick=finish;
+var _go4=go;go=function(v){_go4(v);if(v!="ped"&&addTo&&!pendingSend){addTo=null;showAddTo()}};
+</script>
 </body></html>
