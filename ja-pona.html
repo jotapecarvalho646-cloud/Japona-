@@ -324,7 +324,7 @@ function renderCx(){
   mv.forEach(function(m){h+="<div class='line'><div class='n'>"+m.n+"<small>"+hm(m.t)+"</small></div><b style='color:"+(m.v<0?"var(--brand)":"var(--ok)")+"'>"+(m.v<0?"− ":"+ ")+brl(Math.abs(m.v))+"</b>"+(m.v<0?"<button class='x' data-del='"+m.id+"' type='button'>✕</button>":"")+"</div>"});
   h+="</div><div class='ch'>Últimos dias</div><div class='pan'>";
   for(var i=0;i<7;i++){var d=new Date();d.setDate(d.getDate()-i);var q=dayData(d);h+="<div class='line hist' data-t='"+d.getTime()+"'><div class='n'>"+dl(d)+"<small>"+q.e.length+" vendas</small></div><b>"+brl(q.te)+"</b></div>"}
-  $("caixa").innerHTML=h+"</div><button class='big' id='team' type='button' style='background:var(--ink);color:var(--bg);margin-top:18px'>👥 Equipe e logins</button>"+(window.cur&&cur.r=="dono"?"<button class='ghost' id='zerar' type='button' style='margin-top:22px;color:var(--brand)'>🧹 Zerar dados de teste</button>":"")+"";
+  $("caixa").innerHTML=h+"</div><button class='big' id='relItens' type='button' style='background:var(--brand);color:#fff;margin-top:18px'>🥟 Relatório: o que vendeu no dia</button><button class='big' id='team' type='button' style='background:var(--ink);color:var(--bg);margin-top:12px'>👥 Equipe e logins</button>"+(window.cur&&cur.r=="dono"?"<button class='ghost' id='zerar' type='button' style='margin-top:22px;color:var(--brand)'>🧹 Zerar dados de teste</button>":"")+"";
 }
 $("caixa").addEventListener("click",function(e){
   var b=e.target.closest("button"),r=e.target.closest(".hist");
@@ -890,5 +890,36 @@ $("send").onclick=function(){_send2.apply(this,arguments);
 var _fin2=finish;finish=function(){addTo=null;showAddTo();_fin2.apply(this,arguments)};
 $("done").onclick=finish;
 var _go4=go;go=function(v){_go4(v);if(v!="ped"&&addTo&&!pendingSend){addTo=null;showAddTo()}};
+</script>
+
+<script>
+// RELATÓRIO DE ITENS VENDIDOS POR DIA (só dono/supervisor, dentro do Caixa)
+var rDay=new Date();
+function grpOf(cat){var c=cat.toLowerCase();if(/past/.test(c))return"🥟 Pastéis";if(/suco/.test(c))return"🍊 Suco de laranja";if(/caldo/.test(c))return"🥤 Caldo de cana";if(/adicion/.test(c))return"➕ Adicionais";return"🧃 Outras bebidas"}
+var GORD=["🥟 Pastéis","🍊 Suco de laranja","🥤 Caldo de cana","🧃 Outras bebidas","➕ Adicionais"];
+function relItens(){
+  if(!(window.cur&&cur.r!="func")){sheet("<h3>🔒 Só dono ou supervisor</h3><button class='big' data-a='x' type='button'>OK</button>");return}
+  var k=rDay.toDateString(),hoje=k==new Date().toDateString(),vs=sales.filter(function(s){return ds(s.t)==k});
+  var G={},tq=0,tv=0;
+  vs.forEach(function(s){Object.keys(s.o||{}).forEach(function(key){
+    var p=key.split("-"),g=MENU[p[0]],it=g&&g.itens[p[1]];if(!it)return;var q=Number(s.o[key])||0;if(!q)return;
+    var gn=grpOf(g.cat),nm=it[0].replace(/^Adicional: /,"");
+    G[gn]=G[gn]||{q:0,v:0,it:{}};var x=G[gn].it[nm]=G[gn].it[nm]||{q:0,v:0};
+    x.q+=q;x.v+=q*it[2];G[gn].q+=q;G[gn].v+=q*it[2];if(gn!="➕ Adicionais")tq+=q;tv+=q*it[2]})});
+  var h="<h3>🥟 O que vendeu</h3><div class='dsel'><button data-rd='-1' type='button'>‹</button><b>"+(hoje?"Hoje · ":"")+dl(rDay)+"</b><button data-rd='1' type='button'"+(hoje?" disabled":"")+">›</button></div>";
+  var gs=GORD.filter(function(g){return G[g]});
+  if(!gs.length)h+="<p style='color:var(--mut)'>Nenhuma venda fechada neste dia.</p>";
+  else{
+    h+="<div class='sumg'>"+gs.filter(function(g){return g!="➕ Adicionais"}).map(function(g){return "<div><small>"+g+"</small><b>"+G[g].q+"</b></div>"}).join("")+"</div>";
+    gs.forEach(function(g){var L=Object.keys(G[g].it).map(function(n){return[n,G[g].it[n]]}).sort(function(a,b){return b[1].q-a[1].q||a[0].localeCompare(b[0])});
+      h+="<div class='ch'>"+g+" · "+G[g].q+(G[g].q==1?" unidade":" unidades")+"</div><div class='pan'>";
+      L.forEach(function(l){h+="<div class='line'><div class='n'><b>"+l[1].q+"x</b> "+esc(l[0])+"</div><span style='color:var(--mut)'>"+brl(l[1].v)+"</span></div>"});
+      h+="</div>"});
+    h+="<div class='sum'><span>Total em itens</span><span>"+brl(tv)+"</span></div><p style='color:var(--mut);font-size:13px'>Conta só as vendas já pagas (mesas e pedidos para levar fechados).</p>";
+  }
+  sheet(h+"<button class='ghost' data-a='x' type='button'>Fechar</button>");
+}
+$("caixa").addEventListener("click",function(e){var b=e.target.closest("button");if(b&&b.id=="relItens"){rDay=new Date(day.getTime());relItens()}});
+$("psheet").addEventListener("click",function(e){var b=e.target.closest("button");if(b&&b.dataset.rd){rDay=new Date(rDay.getTime()+Number(b.dataset.rd)*864e5);relItens()}});
 </script>
 </body></html>
