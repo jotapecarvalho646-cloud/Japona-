@@ -347,7 +347,7 @@ $("psheet").addEventListener("click",function(e){
     var t=isHoje()?Date.now():new Date(day.getFullYear(),day.getMonth(),day.getDate(),12).getTime();
     sai.push({v:x,d:$("sd").value.trim()||"Saída",t:t});saveX();$("pveil").style.display="none";renderCx()}
 });
-var _go=go;go=function(v){_go(v);$("caixa").style.display=v=="caixa"?"block":"none";var c=$("vCx");if(c)c.className=v=="caixa"?"on":"";if(v=="caixa")renderCx()};
+var _go=go;go=function(v){if(v=="caixa"&&!(typeof boss=="function"&&boss()))v="ped";_go(v);$("caixa").style.display=v=="caixa"?"block":"none";var c=$("vCx");if(c)c.className=v=="caixa"?"on":"";if(v=="caixa")renderCx()};
 </script>
 <style>
 #login{position:fixed;inset:0;z-index:30;background:var(--bg);overflow:auto;display:flex;align-items:flex-start;justify-content:center;padding:40px 16px}
@@ -375,9 +375,9 @@ select{width:100%;padding:14px;border-radius:12px;border:2px solid var(--line);b
 </style>
 <div id="login"></div>
 <script>
-// LOGIN E PERMISSÕES — dono, supervisor e funcionário
+// LOGIN E PERMISSÕES — dono, supervisor e equipe
 var users=[],cur=null,lsel=null,lpin="";
-var RN={dono:"Dono",sup:"Supervisor",func:"Funcionário"};
+var RN={dono:"Dono",sup:"Supervisor",func:"Equipe"};
 function esc(t){return String(t).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
 function ini(n){return esc(n.trim().charAt(0).toUpperCase()||"?")}
 try{users=JSON.parse(localStorage.getItem("jp_users")||"[]")}catch(e){}
@@ -427,10 +427,10 @@ function logout(){cur=null;owner=false;$("pveil").style.display="none";$("veil")
 $("lock").onclick=function(){
   sheet("<h3>👤 "+esc(cur.n)+"</h3><p style='color:var(--mut)'>"+RN[cur.r]+"</p>"+(boss()?"<button class='big' data-a='uteam' type='button' style='background:var(--ink);color:var(--bg)'>👥 Equipe e logins</button><button class='big' data-a='fexp' type='button' style='background:#2f6fd2'>📤 Salvar app com as fotos</button>":"")+"<button class='big' data-a='uout' type='button' style='background:var(--brand)'>Sair</button><button class='ghost' data-a='x' type='button'>Fechar</button>");
 };
-// quem pode mexer em quem: dono mexe em todos; supervisor só em funcionários
+// quem pode mexer em quem: dono mexe em todos; supervisor só na equipe
 function canEdit(u){return cur.r=="dono"||(cur.r=="sup"&&u.r=="func")}
 function team(){
-  var h="<h3>👥 Equipe e logins</h3><p style='color:var(--mut);margin-top:-6px'>"+(cur.r=="dono"?"Você pode criar e alterar qualquer login.":"Você pode criar e alterar logins de funcionários.")+"</p>";
+  var h="<h3>👥 Equipe e logins</h3><p style='color:var(--mut);margin-top:-6px'>"+(cur.r=="dono"?"Você pode criar e alterar qualquer login.":"Você pode criar e alterar logins da equipe.")+"</p>";
   users.forEach(function(u){h+="<div class='urow'><span class='av "+u.r+"'>"+ini(u.n)+"</span><div class='n'>"+esc(u.n)+(u.id==cur.id?" (você)":"")+"<small>"+RN[u.r]+"</small></div>"+(canEdit(u)?"<button type='button' data-a='uedit' data-id='"+u.id+"'>✏️ Editar</button>":"")+"</div>"});
   sheet(h+"<button class='big' data-a='unew' type='button' style='margin-top:14px'>➕ Novo login</button><button class='ghost' data-a='x' type='button'>Fechar</button>");
 }
