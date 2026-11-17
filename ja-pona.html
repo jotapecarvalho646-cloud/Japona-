@@ -382,8 +382,8 @@ function esc(t){return String(t).replace(/[&<>"']/g,function(c){return{"&":"&amp
 function ini(n){return esc(n.trim().charAt(0).toUpperCase()||"?")}
 try{users=JSON.parse(localStorage.getItem("jp_users")||"[]")}catch(e){}
 if(!users.length&&pin)users=[{id:1,n:"Dono",r:"dono",p:pin}];
-// EQUIPE: um login só para todos os funcionários
-function oneTeam(){var f=users.filter(function(u){return u.r=="func"});if(!f.length||(f.length==1&&f[0].n=="Equipe"))return false;var k={id:f[0].id,n:"Equipe",r:"func",p:f[0].p};users=users.filter(function(u){return u.r!="func"});users.push(k);return true}
+// EQUIPE: vários logins de equipe, cada um com o nome da pessoa (sem acesso ao caixa)
+function oneTeam(){return false}
 function hasTeam(x){return users.some(function(u){return u.r=="func"&&(!x||u.id!=x.id)})}
 if(oneTeam())try{localStorage.setItem("jp_users",JSON.stringify(users))}catch(e){}
 function saveU(){try{localStorage.setItem("jp_users",JSON.stringify(users))}catch(e){}}
@@ -434,14 +434,13 @@ $("lock").onclick=function(){
 // quem pode mexer em quem: dono mexe em todos; supervisor só na equipe
 function canEdit(u){return cur.r=="dono"||(cur.r=="sup"&&u.r=="func")}
 function team(){
-  var h="<h3>👥 Equipe e logins</h3><p style='color:var(--mut);margin-top:-6px'>"+(cur.r=="dono"?"Você pode criar e alterar qualquer login.":"Você pode alterar o login da Equipe.")+"</p>";
+  var h="<h3>👥 Equipe e logins</h3><p style='color:var(--mut);margin-top:-6px'>"+(cur.r=="dono"?"Você pode criar e alterar qualquer login.":"Você pode criar e alterar os logins da Equipe.")+"</p>";
   users.forEach(function(u){h+="<div class='urow'><span class='av "+u.r+"'>"+ini(u.n)+"</span><div class='n'>"+esc(u.n)+(u.id==cur.id?" (você)":"")+"<small>"+RN[u.r]+"</small></div>"+(canEdit(u)?"<button type='button' data-a='uedit' data-id='"+u.id+"'>✏️ Editar</button>":"")+"</div>"});
   sheet(h+"<button class='big' data-a='unew' type='button' style='margin-top:14px'>➕ Novo login</button><button class='ghost' data-a='x' type='button'>Fechar</button>");
 }
 function uform(u){
-  var ops=(cur.r=="dono"?["func","sup","dono"]:["func"]).filter(function(r){return r!="func"||!hasTeam(u)});
-  if(!ops.length){sheet("<h3>👥 Equipe</h3><p>O login <b>Equipe</b> já existe. Toque em ✏️ Editar nele para trocar a senha.</p><button class='ghost' data-a='uteam' type='button'>Voltar</button>");return}
-  var h="<h3>"+(u?"Editar login":"Novo login")+"</h3><input id='un' type='text' placeholder='Nome' autocomplete='off' value=\""+(u?esc(u.n):"")+"\">";
+  var ops=cur.r=="dono"?["func","sup","dono"]:["func"];
+  var h="<h3>"+(u?"Editar login":"Novo login")+"</h3><input id='un' type='text' placeholder='Nome da pessoa (ex.: Maria)' autocomplete='off' value=\""+(u?esc(u.n):"")+"\">";
   h+="<select id='ur'>"+ops.map(function(r){return "<option value='"+r+"'"+(u&&u.r==r?" selected":"")+">"+RN[r]+"</option>"}).join("")+"</select>";
   h+="<input id='up' type='password' inputmode='numeric' maxlength='4' autocomplete='off' placeholder='"+(u?"Nova senha (deixe vazio p/ manter)":"Senha de 4 números")+"'><div class='troco' id='ue' style='display:none'></div>";
   h+="<button class='big' data-a='usave' data-id='"+(u?u.id:"")+"' type='button'>Salvar</button>";
@@ -458,8 +457,8 @@ $("psheet").addEventListener("click",function(e){
   else if(a=="usave"){
     var n=$("un").value.trim(),r=$("ur").value,p=$("up").value,er=$("ue"),id=b.dataset.id,u=id?users.filter(function(x){return x.id==id})[0]:null;
     function bad(t){er.textContent=t;er.style.display="block"}
-    if(r=="func"){if(hasTeam(u))return bad("Já existe o login Equipe. Só pode ter um.");n="Equipe"}
     if(!n)return bad("Digite o nome.");
+    if(users.some(function(x){return x.n.toLowerCase()==n.toLowerCase()&&(!u||x.id!=u.id)}))return bad("Já existe um login com esse nome.");
     if((!u||p)&&!/^\d{4}$/.test(p))return bad("A senha precisa ter 4 números.");
     if(u&&u.id==cur.id&&cur.r=="dono"&&r!="dono"&&users.filter(function(x){return x.r=="dono"}).length<2)return bad("Precisa ficar pelo menos um dono.");
     if(u){u.n=n;u.r=r;if(p)u.p=p}else users.push({id:Date.now(),n:n,r:r,p:p});
